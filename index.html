@@ -394,7 +394,7 @@ function activeTurmas(key){ if(!cache[key]||!cache[key].aeroclube||!cache[key].a
 function isVoo(key){ return cache[key]&&cache[key].voo===true; }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-window.changeMonth=function(dir){ viewMonth+=dir; if(viewMonth>11){viewMonth=0;viewYear++;} if(viewMonth<0){viewMonth=11;viewYear--;} renderCalendar(); };
+
 window.goToday=function(){ viewYear=todayReal.getFullYear(); viewMonth=todayReal.getMonth(); selectDay(todayKey()); };
 window.selectDay=selectDay;
 
@@ -638,10 +638,31 @@ window.clearDay=async function(){
 
 window.saveTeacherName=saveTeacherName;
 
+async function preloadMonth(year, month){
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const promises=[];
+  for(let d=1;d<=daysInMonth;d++){
+    const k=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    if(!cache[k]) promises.push(loadDay(k));
+  }
+  await Promise.all(promises);
+  renderCalendar();
+}
+
+window.changeMonth=async function(dir){
+  viewMonth+=dir;
+  if(viewMonth>11){viewMonth=0;viewYear++;}
+  if(viewMonth<0){viewMonth=11;viewYear--;}
+  renderCalendar();
+  await preloadMonth(viewYear,viewMonth);
+};
+
 async function init(){
   await loadTeacherName();
-  await renderSchedule();
-  renderCalendar();
+  await Promise.all([
+    renderSchedule(),
+    preloadMonth(viewYear,viewMonth)
+  ]);
   setSyncStatus('synced');
   document.getElementById('loadingOverlay').style.display='none';
 }
