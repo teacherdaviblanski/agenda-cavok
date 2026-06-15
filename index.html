@@ -500,19 +500,46 @@ async function renderSchedule(){
 
   // DESKTOP
   const aeroAtivo=dayData.aeroclube&&dayData.aeroclube.ativo;
-  const dRows=SLOTS.map(slot=>{
+  let dRows='';
+  let aeroInserted=false;
+  SLOTS.forEach(slot=>{
     const blocked=aeroAtivo&&AERO_BLOCKED.includes(slot);
+    if(blocked){
+      if(!aeroInserted){
+        aeroInserted=true;
+        dRows+=`<tr><td colspan="3" style="padding:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;background:#fff8e0;border-top:2px solid #d4a800;border-bottom:2px solid #d4a800;padding:12px 16px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="background:#d4a800;color:#1a3a6b;font-size:12px;font-weight:700;padding:4px 12px;border-radius:10px;">🛩️ 19:00 → 23:00</span>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#7a5f00;">Agenda bloqueada — Aeroclube</div>
+                <div style="font-size:11px;color:#b38a00;">Horários indisponíveis para aulas regulares</div>
+              </div>
+            </div>
+          </div>
+          <div style="background:#f0f4ff;padding:14px 16px;">
+            <div style="font-size:11px;font-weight:700;color:#3a4a7a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">✈️ Turmas do Aeroclube — clique para ativar/desativar</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              ${TURMAS.map(t=>{
+                const tr=dayData.aeroclube.turmas[t];
+                const isAtivo=tr.ativo;
+                return `<div class="turma-card ${t}${isAtivo?' ativo':''}" onclick="toggleTurma('${activeKey}','${t}')" style="cursor:pointer;">
+                  <div class="turma-header"><span class="turma-pill-lg">${TURMA_LABELS[t]}</span><span class="turma-nome">${TURMA_NAMES[t]}</span></div>
+                  <div class="turma-body" onclick="event.stopPropagation()">
+                    <input class="turma-input${tr.aluno?' filled':''}" placeholder="Nome do aluno..." value="${esc(tr.aluno)}" data-key="${activeKey}" data-turma="${t}" data-field="aluno" oninput="updateTurma(this)" />
+                    <input class="turma-input" placeholder="Observações..." value="${esc(tr.obs)}" data-key="${activeKey}" data-turma="${t}" data-field="obs" oninput="updateTurma(this)" />
+                  </div>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>
+        </td></tr>`;
+      }
+      return;
+    }
     const val=dayData.slots[slot]||{student:'',obs:''};
     const filled=val.student&&val.student.trim()!==''?' filled':'';
-    if(blocked){
-      return `<tr style="border-bottom:1px solid #f0e8c0;background:#fff8e0;">
-        <td style="padding:6px 8px;text-align:center;"><span class="time-badge" style="background:#fdedb0;border-color:#d4a800;color:#7a5f00;">${slot}</span></td>
-        <td colspan="2" style="padding:5px 14px;">
-          <span style="font-size:12px;color:#b38a00;font-weight:500;">🛩️ Bloqueado — Aeroclube (19:00–23:00)</span>
-        </td>
-      </tr>`;
-    }
-    return `<tr style="border-bottom:1px solid #f0e8c0;">
+    dRows+=`<tr style="border-bottom:1px solid #f0e8c0;">
       <td style="padding:6px 8px;text-align:center;"><span class="time-badge">${slot}</span></td>
       <td style="padding:5px 8px;">
         <input type="text" class="student-input${filled}" placeholder="Nome do aluno..."
@@ -524,7 +551,7 @@ async function renderSchedule(){
         <textarea class="obs-input" placeholder="Obs..." data-key="${activeKey}" data-slot="${slot}" data-field="obs" oninput="updateField(this)">${esc(val.obs)}</textarea>
       </td>
     </tr>`;
-  }).join('');
+  });
 
   document.getElementById('d-mainContent').innerHTML=`
     <div class="d-day-header">
@@ -544,7 +571,6 @@ async function renderSchedule(){
         <tbody>${dRows}</tbody>
       </table>
     </div>
-    ${aeroSecaoHTML(activeKey,false)}
     <div style="padding:0 16px;">
       <div class="day-notes-wrap" style="margin:16px 12px 0;">
         <label>📝 Notas gerais do dia</label>
@@ -563,18 +589,45 @@ async function renderSchedule(){
     </div>`;
 
   // MOBILE slots
-  const mCards=SLOTS.map(slot=>{
+  let mCards='';
+  let mAeroInserted=false;
+  SLOTS.forEach(slot=>{
     const blocked=aeroAtivo&&AERO_BLOCKED.includes(slot);
+    if(blocked){
+      if(!mAeroInserted){
+        mAeroInserted=true;
+        mCards+=`<div style="background:#fff8e0;border-top:2px solid #d4a800;border-bottom:2px solid #d4a800;padding:12px;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <span style="background:#d4a800;color:#1a3a6b;font-size:11px;font-weight:700;padding:3px 10px;border-radius:8px;">🛩️ 19:00 → 23:00</span>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:#7a5f00;">Agenda bloqueada</div>
+              <div style="font-size:10px;color:#b38a00;">Aeroclube — aulas indisponíveis</div>
+            </div>
+          </div>
+          <div style="background:#f0f4ff;border-radius:8px;padding:10px;">
+            <div style="font-size:10px;font-weight:700;color:#3a4a7a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">✈️ Turmas — toque para ativar</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+              ${TURMAS.map(t=>{
+                const tr=dayData.aeroclube.turmas[t];
+                const isAtivo=tr.ativo;
+                return `<div class="turma-card ${t}${isAtivo?' ativo':''}" onclick="toggleTurma('${activeKey}','${t}')" style="cursor:pointer;">
+                  <div class="turma-header" style="padding:6px 8px;"><span class="turma-pill-lg">${TURMA_LABELS[t]}</span><span class="turma-nome" style="font-size:10px;">${TURMA_NAMES[t]}</span></div>
+                  <div class="turma-body" style="padding:6px 8px;" onclick="event.stopPropagation()">
+                    <input class="turma-input${tr.aluno?' filled':''}" placeholder="Aluno..." value="${esc(tr.aluno)}" data-key="${activeKey}" data-turma="${t}" data-field="aluno" oninput="updateTurma(this)" style="font-size:12px;" />
+                    <input class="turma-input" placeholder="Obs..." value="${esc(tr.obs)}" data-key="${activeKey}" data-turma="${t}" data-field="obs" oninput="updateTurma(this)" style="font-size:11px;" />
+                  </div>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>
+        </div>`;
+      }
+      return;
+    }
     const val=dayData.slots[slot]||{student:'',obs:''};
     const filled=val.student&&val.student.trim()!==''?' filled':'';
     const booked=val.student&&val.student.trim()!==''?'<span class="m-slot-booked">✓</span>':'';
-    if(blocked){
-      return `<div class="m-slot-card">
-        <div class="m-slot-header" style="background:#b38a00;"><span class="m-slot-time-badge">${slot}</span><span style="font-size:10px;color:#fff8dc;">🛩️ Aeroclube</span></div>
-        <div class="m-slot-body" style="background:#fff8e0;"><span style="font-size:12px;color:#7a5f00;font-weight:500;">Bloqueado — 19:00 às 23:00</span></div>
-      </div>`;
-    }
-    return `<div class="m-slot-card">
+    mCards+=`<div class="m-slot-card">
       <div class="m-slot-header"><span class="m-slot-time-badge">${slot}</span>${booked}</div>
       <div class="m-slot-body">
         <input type="text" class="m-student-input${filled}" placeholder="Nome do aluno..."
@@ -584,14 +637,13 @@ async function renderSchedule(){
         <textarea class="m-obs-input" placeholder="Obs..." data-key="${activeKey}" data-slot="${slot}" data-field="obs" oninput="updateField(this)">${esc(val.obs)}</textarea>
       </div>
     </div>`;
-  }).join('');
+  });
 
   document.getElementById('m-slotsList').innerHTML=`
     ${botoesTopHTML(activeKey,'12px')}
     <div style="height:6px;"></div>
     <div class="section-lbl" style="padding:8px 12px;margin:0 0 6px;">🏫 Aulas regulares</div>
     ${mCards}
-    ${aeroSecaoHTML(activeKey,true)}
     <div class="day-notes-wrap" style="margin:10px 0 0;">
       <label>📝 Notas do dia</label>
       <textarea placeholder="Anotações, lembretes..." oninput="updateDayNotes(this)">${esc(dayData.notes||'')}</textarea>
