@@ -10,25 +10,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-height: 100vh; color: #1a3a6b; }
 
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #e8eef7;
-  min-height: 100vh;
-  color: #1a3a6b;
-}
-
-/* ===================== SHARED ===================== */
-.btn {
-  padding: 7px 14px; border-radius: 8px;
-  font-size: 12px; font-weight: 500;
-  cursor: pointer; border: none;
-  transition: all 0.15s; font-family: inherit;
-}
+.btn { padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; font-family: inherit; }
 .btn-gold { background: #d4a800; color: #1a3a6b; }
 .btn-gold:hover { background: #f0c040; }
-.btn-outline { background: transparent; border: 1.5px solid rgba(212,168,0,0.5); color: #f0c040; }
-.btn-outline:hover { background: rgba(212,168,0,0.1); }
 .btn-danger { background: transparent; border: 1.5px solid rgba(220,80,80,0.5); color: #f08080; }
 .btn-danger:hover { background: rgba(220,80,80,0.1); }
 
@@ -39,171 +25,188 @@ body {
 .sync-dot.error   { background: #f08080; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-.loading-overlay {
-  position: fixed; inset: 0;
-  background: rgba(26,58,107,0.9);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 999; flex-direction: column; gap: 16px;
-}
+.loading-overlay { position: fixed; inset: 0; background: rgba(26,58,107,0.9); display: flex; align-items: center; justify-content: center; z-index: 999; flex-direction: column; gap: 16px; }
 .loading-overlay p { color: #f0c040; font-size: 16px; font-weight: 500; }
 .spinner { width: 40px; height: 40px; border: 4px solid rgba(240,192,64,0.3); border-top-color: #f0c040; border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ===================== DESKTOP ===================== */
-.desktop-wrap { display: none; padding: 20px; }
-.desktop-wrap .container { max-width: 860px; margin: 0 auto; }
+/* ===== CALENDAR SHARED ===== */
+.cal-day { background: white; border: 1.5px solid #e0d080; border-radius: 8px; padding: 5px 3px 5px; text-align: center; cursor: pointer; min-height: 62px; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.12s; }
+.cal-day:hover { background: #fff8dc; border-color: #c9a800; transform: translateY(-1px); }
+.cal-day.active { background: #1a3a6b; border-color: #1a3a6b; box-shadow: 0 3px 10px rgba(26,58,107,0.3); }
+.cal-day.active .cal-num { color: #f0c040; }
+.cal-day.active .cal-wkd { color: #a8c4e8; }
+.cal-day.voo { background: #d4a800; border-color: #b38a00; }
+.cal-day.voo .cal-num { color: #1a3a6b; font-weight: 700; }
+.cal-day.voo .cal-wkd { color: #1a3a6b; opacity: 0.7; }
+.cal-day.voo:hover { background: #e0b000; }
+.cal-day.today-mark { border-color: #d4a800; border-width: 2px; }
+.cal-day.today-mark .cal-num { color: #8a5f00; font-weight: 700; }
+.cal-day.active.today-mark .cal-num { color: #f0c040; }
+.cal-day.voo.today-mark { border-color: #1a3a6b; border-width: 2.5px; }
+.cal-day.empty { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
+.cal-num { font-size: 14px; font-weight: 600; color: #1a3a6b; line-height: 1; }
+.cal-wkd { font-size: 9px; color: #888; font-weight: 500; }
+.cal-indicators { display: flex; gap: 2px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 2px; }
+.cal-dot { width: 6px; height: 6px; background: #d4a800; border-radius: 50%; flex-shrink: 0; }
+.cal-dot.on-voo { background: #1a3a6b; }
+.cal-dot.active-day { background: #f0c040; }
+.pill { font-size: 8px; font-weight: 700; padding: 1px 4px; border-radius: 4px; line-height: 1.5; }
+.pill.pp   { background: #dbeafe; color: #1e40af; }
+.pill.pc   { background: #dcfce7; color: #166534; }
+.pill.inva { background: #ede9fe; color: #5b21b6; }
+.pill.cms  { background: #fee2e2; color: #991b1b; }
+.pill.pp.on-active   { background: rgba(219,234,254,0.35); color: #93c5fd; }
+.pill.pc.on-active   { background: rgba(220,252,231,0.35); color: #86efac; }
+.pill.inva.on-active { background: rgba(237,233,254,0.35); color: #c4b5fd; }
+.pill.cms.on-active  { background: rgba(254,226,226,0.35); color: #fca5a5; }
 
-.d-header {
-  background: linear-gradient(135deg, #1a3a6b 0%, #0d2347 100%);
-  border-radius: 16px 16px 0 0;
-  padding: 20px 28px;
-  display: flex; align-items: center; justify-content: space-between;
-  border-bottom: 4px solid #d4a800;
-}
+/* ===== SCHEDULE SHARED ===== */
+.section-lbl { font-size: 11px; font-weight: 600; color: #7a6820; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 16px 6px; background: #fffef5; border-bottom: 1px solid #f0e8c0; display: flex; align-items: center; gap: 6px; }
+.slot-row { display: flex; align-items: center; gap: 8px; padding: 7px 16px; border-bottom: 1px solid #f0e8c0; }
+.slot-row:last-child { border-bottom: none; }
+.time-badge { background: #e8f0fb; border: 1px solid #b5cef0; color: #1a3a6b; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; min-width: 52px; text-align: center; flex-shrink: 0; }
+.student-input { flex: 1; border: 1px solid #e0d080; border-radius: 8px; padding: 7px 11px; font-size: 14px; color: #1a3a6b; background: #fffef5; outline: none; font-family: inherit; transition: border-color 0.15s, background 0.15s; }
+.student-input:focus { border-color: #1a3a6b; background: white; }
+.student-input::placeholder { color: #c0b070; font-size: 13px; }
+.student-input.filled { background: #f0f8ff; border-color: #90b8e0; }
+.obs-input { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 5px 9px; font-size: 12px; color: #5a6a80; background: #fffef5; outline: none; font-family: inherit; resize: none; height: 32px; transition: border-color 0.15s; }
+.obs-input:focus { border-color: #c9a800; }
+.obs-input::placeholder { color: #c0b070; }
+
+/* AEROCLUBE */
+.aero-section { background: #f0f4ff; }
+.aero-toggle-bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #fffef5; border-top: 1px solid #f0e8c0; border-bottom: 1px solid #f0e8c0; }
+.aero-toggle-btn { background: #1a3a6b; color: #f0c040; border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.aero-toggle-btn.off { background: #e0d5b0; color: #7a6820; }
+.aero-horario-bar { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: #e8eef7; border-bottom: 1px solid #dce4f5; }
+.aero-horario-badge { background: #1a3a6b; color: #f0c040; padding: 3px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; }
+.aero-turmas-label { font-size: 11px; color: #3a4a7a; padding: 10px 16px 6px; font-weight: 600; }
+.turmas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px 16px; }
+.turma-card { border: 2px solid #e0d5f5; border-radius: 10px; overflow: hidden; cursor: pointer; transition: all 0.15s; opacity: 0.5; }
+.turma-card.ativo { opacity: 1; }
+.turma-header { padding: 8px 10px; display: flex; align-items: center; gap: 6px; }
+.turma-pill-lg { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+.turma-nome { font-size: 11px; font-weight: 600; }
+.turma-body { background: white; padding: 8px 10px; border-top: 1px solid rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 5px; }
+.turma-input { width: 100%; font-size: 12px; color: #1a3a6b; border: 1px solid #e0d080; border-radius: 6px; padding: 5px 8px; background: #fffef5; outline: none; font-family: inherit; }
+.turma-input::placeholder { color: #c0b070; }
+.turma-input.filled { background: #f0f8ff; border-color: #90b8e0; }
+.turma-card.pp .turma-header { background: #dbeafe; } .turma-card.pp .turma-pill-lg { background: #1e40af; color: white; } .turma-card.pp .turma-nome { color: #1e40af; } .turma-card.pp.ativo { border-color: #1e40af; }
+.turma-card.pc .turma-header { background: #dcfce7; } .turma-card.pc .turma-pill-lg { background: #166534; color: white; } .turma-card.pc .turma-nome { color: #166534; } .turma-card.pc.ativo { border-color: #166534; }
+.turma-card.inva .turma-header { background: #ede9fe; } .turma-card.inva .turma-pill-lg { background: #5b21b6; color: white; } .turma-card.inva .turma-nome { color: #5b21b6; } .turma-card.inva.ativo { border-color: #5b21b6; }
+.turma-card.cms .turma-header { background: #fee2e2; } .turma-card.cms .turma-pill-lg { background: #991b1b; color: white; } .turma-card.cms .turma-nome { color: #991b1b; } .turma-card.cms.ativo { border-color: #991b1b; }
+
+/* VOO BANNER */
+.voo-banner { background: #d4a800; padding: 8px 16px; display: flex; align-items: center; gap: 10px; }
+.voo-banner span { font-size: 12px; font-weight: 600; color: #1a3a6b; }
+.voo-toggle-btn { margin-left: auto; background: #1a3a6b; color: #f0c040; border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; cursor: pointer; font-family: inherit; font-weight: 600; transition: all 0.15s; }
+.voo-toggle-btn.ativo { background: #f0c040; color: #1a3a6b; }
+
+/* DAY NOTES */
+.day-notes-wrap { margin: 0 16px 16px; padding: 12px; background: #fffef5; border: 1.5px solid #d4c070; border-radius: 10px; }
+.day-notes-wrap label { display: block; font-size: 11px; font-weight: 600; color: #7a6820; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.day-notes-wrap textarea { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 9px 11px; font-size: 14px; color: #1a3a6b; background: white; outline: none; font-family: inherit; resize: vertical; min-height: 60px; }
+
+/* ===== DESKTOP ===== */
+.desktop-wrap { display: none; padding: 20px; }
+.desktop-wrap .container { max-width: 880px; margin: 0 auto; }
+
+.d-header { background: linear-gradient(135deg, #1a3a6b 0%, #0d2347 100%); border-radius: 16px 16px 0 0; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: 4px solid #d4a800; }
 .d-header-left { display: flex; align-items: center; gap: 14px; }
-.d-header-icon { width: 48px; height: 48px; background: rgba(212,168,0,0.18); border: 2px solid #d4a800; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
 .d-header h1 { font-size: 20px; font-weight: 600; color: #f0c040; }
 .d-header p { font-size: 12px; color: #a8c4e8; margin-top: 2px; }
 .d-header-right { display: flex; gap: 8px; align-items: center; }
 
-.d-teacher-bar { background: #f5f0e0; padding: 9px 28px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #d4c070; }
+.d-teacher-bar { background: #f5f0e0; padding: 8px 28px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #d4c070; }
 .d-teacher-bar label { font-size: 12px; color: #7a6820; font-weight: 500; white-space: nowrap; }
 .d-teacher-bar input { border: none; background: transparent; font-size: 14px; color: #1a3a6b; font-weight: 500; flex: 1; outline: none; font-family: inherit; }
 .d-teacher-bar input::placeholder { color: #b0a060; font-weight: 400; }
 
 .d-month-nav { background: #1a3a6b; padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .d-month-label { font-size: 16px; font-weight: 600; color: #f0c040; min-width: 200px; text-align: center; }
-.d-month-arrow { background: rgba(240,192,64,0.15); border: 1.5px solid rgba(240,192,64,0.4); color: #f0c040; width: 34px; height: 34px; border-radius: 8px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: inherit; }
+.d-month-arrow { background: rgba(240,192,64,0.15); border: 1.5px solid rgba(240,192,64,0.4); color: #f0c040; width: 34px; height: 34px; border-radius: 8px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: inherit; }
 .d-month-arrow:hover { background: rgba(240,192,64,0.28); }
-.d-today-btn { background: rgba(240,192,64,0.15); border: 1.5px solid rgba(240,192,64,0.4); color: #f0c040; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+.d-today-btn { background: rgba(240,192,64,0.15); border: 1.5px solid rgba(240,192,64,0.4); color: #f0c040; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; }
 .d-today-btn:hover { background: rgba(240,192,64,0.28); }
 
 .d-cal-wrap { background: #f5f0e0; padding: 14px 28px 16px; border-bottom: 3px solid #d4a800; }
 .d-cal-wds { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 6px; }
 .d-cal-wd { text-align: center; font-size: 11px; font-weight: 600; color: #7a6820; padding: 4px 0; text-transform: uppercase; letter-spacing: 0.5px; }
 .d-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
-.cal-day { background: white; border: 1.5px solid #e0d080; border-radius: 8px; padding: 6px 4px 5px; text-align: center; cursor: pointer; transition: all 0.12s; min-height: 48px; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.cal-day:hover { background: #fff8dc; border-color: #c9a800; transform: translateY(-1px); }
-.cal-day.active { background: #1a3a6b; border-color: #1a3a6b; box-shadow: 0 3px 10px rgba(26,58,107,0.3); }
-.cal-day.active .cal-num { color: #f0c040; }
-.cal-day.active .cal-wkd { color: #a8c4e8; }
-.cal-day.today-mark { border-color: #d4a800; border-width: 2px; }
-.cal-day.today-mark .cal-num { color: #8a5f00; font-weight: 700; }
-.cal-day.active.today-mark .cal-num { color: #f0c040; }
-.cal-day.empty { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
-.cal-num { font-size: 15px; font-weight: 600; color: #1a3a6b; line-height: 1; }
-.cal-wkd { font-size: 10px; color: #888; font-weight: 500; }
-.cal-dot { width: 6px; height: 6px; background: #d4a800; border-radius: 50%; }
 
-.d-main { background: white; padding: 22px 28px; border-radius: 0 0 16px 16px; }
-.d-day-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 3px solid #f0c040; }
+.d-main { background: white; padding: 0 0 20px; border-radius: 0 0 16px 16px; overflow: hidden; }
+.d-day-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px 12px; border-bottom: 3px solid #f0c040; }
 .d-day-title { font-size: 18px; font-weight: 600; color: #1a3a6b; display: flex; align-items: center; gap: 8px; }
 .d-day-count { font-size: 12px; color: #888; font-weight: 400; }
-
-.slots-table { width: 100%; border-collapse: collapse; }
-.slots-table thead th { background: #1a3a6b; color: #f0c040; font-size: 11px; font-weight: 500; padding: 8px 12px; text-align: left; letter-spacing: 0.5px; text-transform: uppercase; }
-.slots-table thead th:first-child { border-radius: 8px 0 0 0; width: 84px; text-align: center; }
-.slots-table thead th:last-child { border-radius: 0 8px 0 0; width: 120px; }
-.slot-row { border-bottom: 1px solid #f0e8c0; transition: background 0.1s; }
-.slot-row:last-child { border-bottom: none; }
-.slot-row:hover { background: #fffef5; }
-.time-cell { padding: 7px 10px; text-align: center; }
-.time-badge { display: inline-block; background: #e8f0fb; border: 1px solid #b5cef0; color: #1a3a6b; padding: 3px 8px; border-radius: 14px; font-size: 12px; font-weight: 600; min-width: 54px; }
-.student-cell { padding: 5px 10px; }
-.student-input { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 7px 11px; font-size: 14px; color: #1a3a6b; background: #fffef5; outline: none; font-family: inherit; transition: border-color 0.15s, background 0.15s; }
-.student-input:focus { border-color: #1a3a6b; background: white; }
-.student-input::placeholder { color: #c0b070; font-size: 13px; }
-.student-input.filled { background: #f0f8ff; border-color: #90b8e0; }
-.notes-cell { padding: 5px 10px; }
-.notes-input { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 5px 9px; font-size: 12px; color: #5a6a80; background: #fffef5; outline: none; font-family: inherit; resize: none; height: 34px; overflow: hidden; transition: border-color 0.15s, height 0.15s; }
-.notes-input:focus { border-color: #c9a800; height: 56px; }
-.notes-input::placeholder { color: #c0b070; }
-
-.d-day-notes { margin-top: 18px; padding: 14px; background: #fffef5; border: 1.5px solid #d4c070; border-radius: 10px; }
-.d-day-notes label { display: block; font-size: 11px; font-weight: 600; color: #7a6820; margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.5px; }
-.d-day-notes textarea { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 9px 11px; font-size: 14px; color: #1a3a6b; background: white; outline: none; font-family: inherit; resize: vertical; min-height: 64px; }
+.d-slots-wrap { padding: 0 12px; }
 .d-footer { text-align: center; padding: 12px; font-size: 11px; color: #999; margin-top: 6px; }
 
-/* ===================== MOBILE ===================== */
-.mobile-wrap { display: none; }
+/* legend desktop */
+.d-legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 8px 28px; background: #f5f0e0; border-top: 1px solid #e0d080; align-items: center; font-size: 11px; color: #7a6820; }
+.d-legend-item { display: flex; align-items: center; gap: 5px; }
+.d-legend-dot { width: 8px; height: 8px; border-radius: 50%; background: #d4a800; }
+.d-legend-box { width: 14px; height: 14px; border-radius: 3px; background: #d4a800; }
 
+/* ===== MOBILE ===== */
+.mobile-wrap { display: none; }
 .m-header { background: #1a3a6b; padding: 12px 16px; border-bottom: 3px solid #d4a800; display: flex; align-items: center; justify-content: space-between; }
 .m-header-left { display: flex; align-items: center; gap: 10px; }
-.m-header-icon { width: 38px; height: 38px; background: rgba(212,168,0,0.18); border: 1.5px solid #d4a800; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 .m-title { font-size: 15px; font-weight: 600; color: #f0c040; }
 .m-subtitle { font-size: 10px; color: #a8c4e8; }
-.m-header-right { display: flex; gap: 6px; align-items: center; }
-.m-sync { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #a8c4e8; }
-
-.m-teacher-bar { background: #f5f0e0; padding: 8px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #d4c070; }
+.m-teacher-bar { background: #f5f0e0; padding: 7px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #d4c070; }
 .m-teacher-bar label { font-size: 12px; color: #7a6820; font-weight: 500; white-space: nowrap; }
 .m-teacher-bar input { border: none; background: transparent; font-size: 13px; color: #1a3a6b; font-weight: 500; flex: 1; outline: none; font-family: inherit; }
-.m-teacher-bar input::placeholder { color: #b0a060; font-weight: 400; }
-
 .m-month-nav { background: #1a3a6b; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
 .m-month-label { font-size: 14px; font-weight: 600; color: #f0c040; }
 .m-month-arrow { background: rgba(240,192,64,0.15); border: 1.5px solid rgba(240,192,64,0.4); color: #f0c040; width: 32px; height: 32px; border-radius: 8px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: inherit; }
 .m-today-btn { background: rgba(240,192,64,0.15); border: 1.5px solid rgba(240,192,64,0.4); color: #f0c040; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer; font-family: inherit; }
-
 .m-cal-wrap { background: #f5f0e0; padding: 10px 12px 12px; border-bottom: 3px solid #d4a800; }
 .m-cal-wds { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 4px; }
 .m-cal-wd { text-align: center; font-size: 9px; font-weight: 600; color: #7a6820; padding: 2px 0; }
 .m-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
-.m-cal-day { background: white; border: 1px solid #e0d080; border-radius: 6px; padding: 4px 2px 3px; text-align: center; cursor: pointer; min-height: 40px; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.12s; }
+.m-cal-day { background: white; border: 1px solid #e0d080; border-radius: 6px; padding: 4px 2px 4px; text-align: center; cursor: pointer; min-height: 52px; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.12s; }
 .m-cal-day:hover { background: #fff8dc; }
 .m-cal-day.active { background: #1a3a6b; border-color: #1a3a6b; }
 .m-cal-day.active .m-cal-num { color: #f0c040; }
 .m-cal-day.active .m-cal-wkd { color: #a8c4e8; }
+.m-cal-day.voo { background: #d4a800; border-color: #b38a00; }
+.m-cal-day.voo .m-cal-num { color: #1a3a6b; font-weight: 700; }
+.m-cal-day.voo .m-cal-wkd { color: #1a3a6b; opacity: 0.7; }
 .m-cal-day.today-mark { border-color: #d4a800; border-width: 2px; }
 .m-cal-day.today-mark .m-cal-num { color: #8a5f00; font-weight: 700; }
 .m-cal-day.active.today-mark .m-cal-num { color: #f0c040; }
 .m-cal-day.empty { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
 .m-cal-num { font-size: 13px; font-weight: 600; color: #1a3a6b; line-height: 1; }
 .m-cal-wkd { font-size: 8px; color: #888; }
-.m-cal-dot { width: 5px; height: 5px; background: #d4a800; border-radius: 50%; }
-
-.m-day-banner { background: white; padding: 12px 16px; border-bottom: 2px solid #f0c040; display: flex; align-items: center; justify-content: space-between; }
-.m-day-name { font-size: 15px; font-weight: 600; color: #1a3a6b; }
-.m-day-info { font-size: 11px; color: #888; margin-top: 2px; }
-.m-clear-btn { background: transparent; border: 1px solid rgba(220,80,80,0.4); color: #f08080; border-radius: 8px; padding: 6px 12px; font-size: 11px; cursor: pointer; font-family: inherit; }
-
-.m-slots-list { background: #e8eef7; padding: 10px 12px 20px; }
+.m-day-banner { background: white; padding: 10px 16px; border-bottom: 2px solid #f0c040; display: flex; align-items: center; justify-content: space-between; }
+.m-day-name { font-size: 14px; font-weight: 600; color: #1a3a6b; }
+.m-day-info { font-size: 10px; color: #888; margin-top: 2px; }
+.m-clear-btn { background: transparent; border: 1px solid rgba(220,80,80,0.4); color: #f08080; border-radius: 8px; padding: 5px 10px; font-size: 11px; cursor: pointer; font-family: inherit; }
+.m-slots-bg { background: #e8eef7; padding: 10px 12px 20px; }
 .m-slot-card { border-radius: 10px; margin-bottom: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(26,58,107,0.1); }
 .m-slot-header { background: #1a3a6b; color: #f0c040; font-size: 12px; font-weight: 600; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; }
 .m-slot-time-badge { background: rgba(240,192,64,0.2); border: 1px solid rgba(240,192,64,0.35); padding: 3px 10px; border-radius: 12px; font-size: 12px; }
 .m-slot-booked { font-size: 10px; color: #80e0a0; }
-.m-slot-body { background: white; padding: 10px 12px; }
-.m-student-input { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 10px 12px; font-size: 15px; color: #1a3a6b; background: #fffef5; outline: none; font-family: inherit; margin-bottom: 6px; -webkit-appearance: none; }
+.m-slot-body { background: white; padding: 10px 12px; display: flex; flex-direction: column; gap: 5px; }
+.m-student-input { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 10px 12px; font-size: 15px; color: #1a3a6b; background: #fffef5; outline: none; font-family: inherit; -webkit-appearance: none; }
 .m-student-input:focus { border-color: #1a3a6b; background: white; }
 .m-student-input::placeholder { color: #c0b070; }
 .m-student-input.filled { background: #f0f8ff; border-color: #90b8e0; }
-.m-obs-input { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 8px 12px; font-size: 13px; color: #5a6a80; background: #fffef5; outline: none; font-family: inherit; resize: none; height: 36px; overflow: hidden; -webkit-appearance: none; }
-.m-obs-input:focus { border-color: #c9a800; }
+.m-obs-input { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 7px 10px; font-size: 13px; color: #5a6a80; background: #fffef5; outline: none; font-family: inherit; resize: none; height: 34px; -webkit-appearance: none; }
 .m-obs-input::placeholder { color: #c0b070; }
-
-.m-day-notes { margin: 0 12px 12px; padding: 12px; background: #fffef5; border: 1.5px solid #d4c070; border-radius: 10px; }
-.m-day-notes label { display: block; font-size: 11px; font-weight: 600; color: #7a6820; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-.m-day-notes textarea { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 10px 12px; font-size: 14px; color: #1a3a6b; background: white; outline: none; font-family: inherit; resize: vertical; min-height: 70px; -webkit-appearance: none; }
 .m-footer { text-align: center; padding: 10px; font-size: 10px; color: #999; background: #e8eef7; }
+.m-legend { display: flex; gap: 10px; flex-wrap: wrap; padding: 8px 12px; background: #f5f0e0; border-bottom: 1px solid #e0d080; font-size: 10px; color: #7a6820; align-items: center; }
+.m-legend-item { display: flex; align-items: center; gap: 4px; }
 
-/* ===================== RESPONSIVE ===================== */
-@media (max-width: 600px) {
-  .desktop-wrap { display: none !important; }
-  .mobile-wrap  { display: block !important; }
-}
-@media (min-width: 601px) {
-  .desktop-wrap { display: block !important; }
-  .mobile-wrap  { display: none !important; }
-}
-
+@media (max-width: 600px) { .desktop-wrap{display:none!important} .mobile-wrap{display:block!important} }
+@media (min-width: 601px) { .desktop-wrap{display:block!important} .mobile-wrap{display:none!important} }
 @media print {
-  body { background: white; }
-  .d-header { background: #1a3a6b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
-  .d-month-nav, .d-cal-wrap, .d-header-right, .d-footer, .loading-overlay { display: none !important; }
-  .d-main { padding: 12px; }
-  .desktop-wrap .container { max-width: 100%; }
-  .desktop-wrap { padding: 0; }
-  @page { margin: 1.5cm; }
+  body{background:white}
+  .d-header{background:#1a3a6b!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:0}
+  .d-month-nav,.d-cal-wrap,.d-header-right,.d-footer,.loading-overlay,.d-legend,.voo-banner,.aero-toggle-bar{display:none!important}
+  .d-main{padding:12px} .desktop-wrap{padding:0} .desktop-wrap .container{max-width:100%}
+  @page{margin:1.5cm}
 }
 </style>
 </head>
@@ -216,46 +219,47 @@ body {
 
 <!-- ===== DESKTOP ===== -->
 <div class="desktop-wrap" id="desktopWrap">
-  <div class="container">
-    <div class="d-header">
-      <div class="d-header-left">
-        <img src="logo.png" alt="Logo Cavok" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:2px solid #d4a800;">
-        <div>
-          <h1>Agenda Cavok</h1>
-          <p id="d-headerSub">Aulas de Inglês</p>
-        </div>
-      </div>
-      <div class="d-header-right">
-        <div class="sync-indicator">
-          <div class="sync-dot" id="d-syncDot"></div>
-          <span id="d-syncLabel">conectando...</span>
-        </div>
-        <button class="btn btn-danger" onclick="clearDay()">🗑 Limpar dia</button>
-        <button class="btn btn-gold" onclick="window.print()">🖨 Imprimir</button>
-      </div>
+ <div class="container">
+  <div class="d-header">
+    <div class="d-header-left">
+      <img src="logo.png" alt="Logo Cavok" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:2px solid #d4a800;">
+      <div><h1>Agenda Cavok</h1><p id="d-headerSub">Aulas de Inglês</p></div>
     </div>
-    <div class="d-teacher-bar">
-      <label>Professor(a):</label>
-      <input type="text" id="d-teacherName" placeholder="Digite seu nome aqui..." oninput="saveTeacherName()" />
+    <div class="d-header-right">
+      <div class="sync-indicator"><div class="sync-dot" id="d-syncDot"></div><span id="d-syncLabel">conectando...</span></div>
+      <button class="btn btn-danger" onclick="clearDay()">🗑 Limpar dia</button>
+      <button class="btn btn-gold" onclick="window.print()">🖨 Imprimir</button>
     </div>
-    <div class="d-month-nav">
-      <button class="d-month-arrow" onclick="changeMonth(-1)">&#8592;</button>
-      <span class="d-month-label" id="d-monthLabel"></span>
-      <button class="d-month-arrow" onclick="changeMonth(1)">&#8594;</button>
-      <button class="d-today-btn" onclick="goToday()">Hoje</button>
-    </div>
-    <div class="d-cal-wrap">
-      <div class="d-cal-wds">
-        <div class="d-cal-wd">Dom</div><div class="d-cal-wd">Seg</div>
-        <div class="d-cal-wd">Ter</div><div class="d-cal-wd">Qua</div>
-        <div class="d-cal-wd">Qui</div><div class="d-cal-wd">Sex</div>
-        <div class="d-cal-wd">Sáb</div>
-      </div>
-      <div class="d-cal-grid" id="d-calGrid"></div>
-    </div>
-    <div class="d-main" id="d-mainContent"></div>
-    <div class="d-footer">Agenda Cavok ✈️ · Dados sincronizados na nuvem</div>
   </div>
+  <div class="d-teacher-bar">
+    <label>Professor(a):</label>
+    <input type="text" id="d-teacherName" placeholder="Digite seu nome aqui..." oninput="saveTeacherName()" />
+  </div>
+  <div class="d-month-nav">
+    <button class="d-month-arrow" onclick="changeMonth(-1)">&#8592;</button>
+    <span class="d-month-label" id="d-monthLabel"></span>
+    <button class="d-month-arrow" onclick="changeMonth(1)">&#8594;</button>
+    <button class="d-today-btn" onclick="goToday()">Hoje</button>
+  </div>
+  <div class="d-cal-wrap">
+    <div class="d-cal-wds">
+      <div class="d-cal-wd">Dom</div><div class="d-cal-wd">Seg</div><div class="d-cal-wd">Ter</div>
+      <div class="d-cal-wd">Qua</div><div class="d-cal-wd">Qui</div><div class="d-cal-wd">Sex</div><div class="d-cal-wd">Sáb</div>
+    </div>
+    <div class="d-cal-grid" id="d-calGrid"></div>
+  </div>
+  <div class="d-legend">
+    <span>Legenda:</span>
+    <div class="d-legend-item"><div class="d-legend-dot"></div> Aula marcada</div>
+    <div class="d-legend-item"><span class="pill pp">PP</span> Piloto Privado</div>
+    <div class="d-legend-item"><span class="pill pc">PC</span> Piloto Comercial</div>
+    <div class="d-legend-item"><span class="pill inva">IN</span> INVA</div>
+    <div class="d-legend-item"><span class="pill cms">CM</span> CMS</div>
+    <div class="d-legend-item"><div class="d-legend-box"></div> Dia de voo</div>
+  </div>
+  <div class="d-main" id="d-mainContent"></div>
+  <div class="d-footer">Agenda Cavok ✈️ · Dados sincronizados na nuvem</div>
+ </div>
 </div>
 
 <!-- ===== MOBILE ===== -->
@@ -263,44 +267,41 @@ body {
   <div class="m-header">
     <div class="m-header-left">
       <img src="logo.png" alt="Logo Cavok" style="width:38px;height:38px;border-radius:8px;object-fit:cover;border:1.5px solid #d4a800;">
-      <div>
-        <div class="m-title">Agenda Cavok ✈️</div>
-        <div class="m-subtitle" id="m-headerSub">Aulas de Inglês</div>
-      </div>
+      <div><div class="m-title">Agenda Cavok ✈️</div><div class="m-subtitle" id="m-headerSub">Aulas de Inglês</div></div>
     </div>
-    <div class="m-header-right">
-      <div class="m-sync">
-        <div class="sync-dot" id="m-syncDot"></div>
-        <span id="m-syncLabel"></span>
-      </div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <div class="sync-indicator"><div class="sync-dot" id="m-syncDot"></div><span id="m-syncLabel"></span></div>
       <button class="btn btn-gold" style="padding:6px 10px;font-size:11px;" onclick="window.print()">🖨</button>
     </div>
   </div>
-
   <div class="m-teacher-bar">
     <label>Prof.:</label>
     <input type="text" id="m-teacherName" placeholder="Seu nome..." oninput="saveTeacherName()" />
   </div>
-
   <div class="m-month-nav">
     <button class="m-month-arrow" onclick="changeMonth(-1)">&#8592;</button>
     <span class="m-month-label" id="m-monthLabel"></span>
     <button class="m-month-arrow" onclick="changeMonth(1)">&#8594;</button>
     <button class="m-today-btn" onclick="goToday()">Hoje</button>
   </div>
-
   <div class="m-cal-wrap">
     <div class="m-cal-wds">
-      <div class="m-cal-wd">D</div><div class="m-cal-wd">S</div>
-      <div class="m-cal-wd">T</div><div class="m-cal-wd">Q</div>
-      <div class="m-cal-wd">Q</div><div class="m-cal-wd">S</div>
-      <div class="m-cal-wd">S</div>
+      <div class="m-cal-wd">D</div><div class="m-cal-wd">S</div><div class="m-cal-wd">T</div>
+      <div class="m-cal-wd">Q</div><div class="m-cal-wd">Q</div><div class="m-cal-wd">S</div><div class="m-cal-wd">S</div>
     </div>
     <div class="m-cal-grid" id="m-calGrid"></div>
   </div>
-
+  <div class="m-legend">
+    <span>Legenda:</span>
+    <div class="m-legend-item"><span style="width:7px;height:7px;background:#d4a800;border-radius:50%;display:inline-block;"></span> Aula</div>
+    <div class="m-legend-item"><span class="pill pp">PP</span></div>
+    <div class="m-legend-item"><span class="pill pc">PC</span></div>
+    <div class="m-legend-item"><span class="pill inva">IN</span></div>
+    <div class="m-legend-item"><span class="pill cms">CM</span></div>
+    <div class="m-legend-item"><span style="width:10px;height:10px;background:#d4a800;border-radius:2px;display:inline-block;"></span> Voo</div>
+  </div>
   <div id="m-dayBanner"></div>
-  <div class="m-slots-list" id="m-slotsList"></div>
+  <div class="m-slots-bg" id="m-slotsList"></div>
   <div class="m-footer">Agenda Cavok ✈️ · Sincronizado na nuvem ☁️</div>
 </div>
 
@@ -316,279 +317,328 @@ const firebaseConfig = {
   messagingSenderId: "922283219152",
   appId: "1:922283219152:web:e6c6ce31f1f0878064a6d5"
 };
-
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
 const MONTHS_PT   = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const WEEKDAYS_PT = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 const SUFFIXES    = ['','‑feira','‑feira','‑feira','‑feira','‑feira',''];
-const SLOTS = [
-  '06:00','06:30','07:00','07:30','08:00','08:30',
-  '09:00','09:30','10:00','10:30','11:00','11:30',
-  '12:00','12:30','13:00','13:30','14:00','14:30',
-  '15:00','15:30','16:00','16:30','17:00','17:30',
-  '18:00','18:30','19:00','19:30','20:00','20:30',
-  '21:00','21:30','22:00'
-];
+const SLOTS = ['06:00','06:30','07:00','07:30','08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30','21:00','21:30','22:00'];
+const TURMAS = ['pp','pc','inva','cms'];
+const TURMA_NAMES = { pp:'Piloto Privado', pc:'Piloto Comercial', inva:'INVA', cms:'CMS' };
+const TURMA_LABELS = { pp:'PP', pc:'PC', inva:'INVA', cms:'CMS' };
 
 const todayReal = new Date();
-let viewYear  = todayReal.getFullYear();
-let viewMonth = todayReal.getMonth();
+let viewYear = todayReal.getFullYear(), viewMonth = todayReal.getMonth();
 let activeKey = dateKey(todayReal);
-let cache = {};
-let saveTimers = {};
+let cache = {}, saveTimers = {};
 
-function dateKey(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+function dateKey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function keyToDate(k){ const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d); }
+function todayKey(){ return dateKey(todayReal); }
+function isMobile(){ return window.innerWidth<=600; }
+
+function emptyDay(){
+  const slots={};
+  SLOTS.forEach(s=>slots[s]={student:'',obs:''});
+  const aeroclube={ativo:false, turmas:{}};
+  TURMAS.forEach(t=>aeroclube.turmas[t]={ativo:false,aluno:'',obs:''});
+  return {slots, notes:'', voo:false, aeroclube};
 }
-function keyToDate(k) { const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d); }
-function todayKey()   { return dateKey(todayReal); }
-function emptyDay()   { const s={}; SLOTS.forEach(x=>s[x]={student:'',obs:''}); return {slots:s,notes:''}; }
 
-function isMobile() { return window.innerWidth <= 600; }
-
-function setSyncStatus(state) {
-  ['d-','m-'].forEach(p => {
-    const dot = document.getElementById(p+'syncDot');
-    const lbl = document.getElementById(p+'syncLabel');
-    if (!dot) return;
-    dot.className = 'sync-dot ' + state;
-    if (state==='syncing') lbl.textContent='salvando...';
-    else if (state==='synced') lbl.textContent='salvo ✓';
-    else if (state==='error') lbl.textContent='erro';
-    else lbl.textContent='';
+function setSyncStatus(s){
+  ['d-','m-'].forEach(p=>{
+    const dot=document.getElementById(p+'syncDot');
+    const lbl=document.getElementById(p+'syncLabel');
+    if(!dot)return;
+    dot.className='sync-dot '+s;
+    lbl.textContent=s==='syncing'?'salvando...':s==='synced'?'salvo ✓':s==='error'?'erro':'';
   });
 }
 
-async function loadDay(key) {
-  if (cache[key]) return cache[key];
-  try {
-    const snap = await getDoc(doc(db,'agenda',key));
-    cache[key] = snap.exists() ? snap.data() : emptyDay();
-  } catch(e) { cache[key] = emptyDay(); }
+async function loadDay(key){
+  if(cache[key])return cache[key];
+  try{ const snap=await getDoc(doc(db,'agenda',key)); cache[key]=snap.exists()?mergeDay(snap.data()):emptyDay(); }
+  catch(e){ cache[key]=emptyDay(); }
   return cache[key];
 }
 
-async function saveDay(key) {
-  setSyncStatus('syncing');
-  try {
-    await setDoc(doc(db,'agenda',key), cache[key]);
-    setSyncStatus('synced');
-  } catch(e) { setSyncStatus('error'); }
-}
-
-function scheduleSave(key) {
-  clearTimeout(saveTimers[key]);
-  saveTimers[key] = setTimeout(()=>saveDay(key), 800);
-}
-
-async function saveTeacherName() {
-  const n = document.getElementById(isMobile()?'m-teacherName':'d-teacherName').value;
-  document.getElementById('d-teacherName').value = n;
-  document.getElementById('m-teacherName').value = n;
-  try { await setDoc(doc(db,'config','professor'),{name:n}); } catch(e){}
-}
-
-async function loadTeacherName() {
-  try {
-    const snap = await getDoc(doc(db,'config','professor'));
-    if (snap.exists()) {
-      const n = snap.data().name || '';
-      document.getElementById('d-teacherName').value = n;
-      document.getElementById('m-teacherName').value = n;
-    }
-  } catch(e){}
-}
-
-function hasData(key) {
-  if (!cache[key]) return false;
-  return Object.values(cache[key].slots).some(v=>v.student&&v.student.trim()!=='');
-}
-function countStudents(key) {
-  if (!cache[key]) return 0;
-  return Object.values(cache[key].slots).filter(v=>v.student&&v.student.trim()!=='').length;
-}
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-window.changeMonth = function(dir) {
-  viewMonth += dir;
-  if (viewMonth>11){viewMonth=0;viewYear++;}
-  if (viewMonth<0){viewMonth=11;viewYear--;}
-  renderCalendar();
-};
-window.goToday = function() {
-  viewYear=todayReal.getFullYear(); viewMonth=todayReal.getMonth();
-  selectDay(todayKey());
-};
-window.selectDay = selectDay;
-
-async function selectDay(key) {
-  activeKey = key;
-  const d = keyToDate(key);
-  viewYear = d.getFullYear(); viewMonth = d.getMonth();
-  renderCalendar();
-  await renderSchedule();
-}
-
-function renderCalendar() {
-  const label = `${MONTHS_PT[viewMonth]} ${viewYear}`;
-  document.getElementById('d-monthLabel').textContent = label;
-  document.getElementById('m-monthLabel').textContent = label;
-
-  const firstDay    = new Date(viewYear,viewMonth,1).getDay();
-  const daysInMonth = new Date(viewYear,viewMonth+1,0).getDate();
-  const todK = todayKey();
-
-  let dCells='', mCells='';
-  for (let i=0;i<firstDay;i++) {
-    dCells += `<div class="cal-day empty"></div>`;
-    mCells += `<div class="m-cal-day empty"></div>`;
+function mergeDay(data){
+  const def=emptyDay();
+  def.voo=data.voo||false;
+  def.notes=data.notes||'';
+  if(data.slots) Object.keys(data.slots).forEach(s=>{ if(def.slots[s]) def.slots[s]={...def.slots[s],...data.slots[s]}; });
+  if(data.aeroclube){
+    def.aeroclube.ativo=data.aeroclube.ativo||false;
+    if(data.aeroclube.turmas) TURMAS.forEach(t=>{ if(data.aeroclube.turmas[t]) def.aeroclube.turmas[t]={...def.aeroclube.turmas[t],...data.aeroclube.turmas[t]}; });
   }
-  for (let d=1;d<=daysInMonth;d++) {
-    const k  = `${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dt = new Date(viewYear,viewMonth,d);
-    const wd = dt.getDay();
-    const isActive = k===activeKey;
-    const isToday  = k===todK;
-    const hasDot   = hasData(k);
-
-    let dc = 'cal-day'; if(isActive)dc+=' active'; if(isToday)dc+=' today-mark';
-    dCells += `<div class="${dc}" onclick="selectDay('${k}')">
-      <span class="cal-num">${d}</span>
-      <span class="cal-wkd">${WEEKDAYS_PT[wd].slice(0,3)}</span>
-      ${hasDot?'<span class="cal-dot"></span>':''}
-    </div>`;
-
-    let mc = 'm-cal-day'; if(isActive)mc+=' active'; if(isToday)mc+=' today-mark';
-    mCells += `<div class="${mc}" onclick="selectDay('${k}')">
-      <span class="m-cal-num">${d}</span>
-      <span class="m-cal-wkd">${WEEKDAYS_PT[wd].slice(0,1)}</span>
-      ${hasDot?'<span class="m-cal-dot"></span>':''}
-    </div>`;
-  }
-  document.getElementById('d-calGrid').innerHTML = dCells;
-  document.getElementById('m-calGrid').innerHTML = mCells;
+  return def;
 }
 
-async function renderSchedule() {
-  const dayData = await loadDay(activeKey);
-  const dt      = keyToDate(activeKey);
-  const wd      = dt.getDay();
-  const dayName = WEEKDAYS_PT[wd];
-  const suffix  = SUFFIXES[wd];
-  const dateStr = `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
-  const count   = countStudents(activeKey);
+async function saveDay(key){ setSyncStatus('syncing'); try{ await setDoc(doc(db,'agenda',key),cache[key]); setSyncStatus('synced'); }catch(e){ setSyncStatus('error'); } }
+function scheduleSave(key){ clearTimeout(saveTimers[key]); saveTimers[key]=setTimeout(()=>saveDay(key),800); }
 
-  document.getElementById('d-headerSub').textContent = `${dateStr} — Aulas de Inglês`;
-  document.getElementById('m-headerSub').textContent = `${dateStr}`;
+async function saveTeacherName(){
+  const n=document.getElementById(isMobile()?'m-teacherName':'d-teacherName').value;
+  document.getElementById('d-teacherName').value=n;
+  document.getElementById('m-teacherName').value=n;
+  try{ await setDoc(doc(db,'config','professor'),{name:n}); }catch(e){}
+}
+async function loadTeacherName(){
+  try{ const snap=await getDoc(doc(db,'config','professor')); if(snap.exists()){ const n=snap.data().name||''; document.getElementById('d-teacherName').value=n; document.getElementById('m-teacherName').value=n; } }catch(e){}
+}
 
-  /* ---- DESKTOP ---- */
-  const dRows = SLOTS.map(slot => {
-    const val = dayData.slots[slot]||{student:'',obs:''};
-    const filled = val.student&&val.student.trim()!==''?' filled':'';
-    return `<tr class="slot-row">
-      <td class="time-cell"><span class="time-badge">${slot}</span></td>
-      <td class="student-cell">
+function hasAulas(key){ if(!cache[key])return false; return Object.values(cache[key].slots).some(v=>v.student&&v.student.trim()!==''); }
+function countAulas(key){ if(!cache[key])return 0; return Object.values(cache[key].slots).filter(v=>v.student&&v.student.trim()!=='').length; }
+function activeTurmas(key){ if(!cache[key]||!cache[key].aeroclube||!cache[key].aeroclube.ativo)return []; return TURMAS.filter(t=>cache[key].aeroclube.turmas[t].ativo); }
+function isVoo(key){ return cache[key]&&cache[key].voo===true; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+window.changeMonth=function(dir){ viewMonth+=dir; if(viewMonth>11){viewMonth=0;viewYear++;} if(viewMonth<0){viewMonth=11;viewYear--;} renderCalendar(); };
+window.goToday=function(){ viewYear=todayReal.getFullYear(); viewMonth=todayReal.getMonth(); selectDay(todayKey()); };
+window.selectDay=selectDay;
+
+async function selectDay(key){ activeKey=key; const d=keyToDate(key); viewYear=d.getFullYear(); viewMonth=d.getMonth(); renderCalendar(); await renderSchedule(); }
+
+function pillsHTML(key, forActive){
+  const turmas=activeTurmas(key);
+  const dot=hasAulas(key);
+  let html='';
+  if(dot) html+=`<span class="cal-dot${forActive?' active-day':isVoo(key)?' on-voo':''}"></span>`;
+  turmas.forEach(t=>html+=`<span class="pill ${t}${forActive?' on-active':''}">${TURMA_LABELS[t]}</span>`);
+  return html;
+}
+
+function renderCalendar(){
+  const label=`${MONTHS_PT[viewMonth]} ${viewYear}`;
+  document.getElementById('d-monthLabel').textContent=label;
+  document.getElementById('m-monthLabel').textContent=label;
+  const firstDay=new Date(viewYear,viewMonth,1).getDay();
+  const daysInMonth=new Date(viewYear,viewMonth+1,0).getDate();
+  const todK=todayKey();
+  let dC='',mC='';
+  for(let i=0;i<firstDay;i++){ dC+=`<div class="cal-day empty"></div>`; mC+=`<div class="m-cal-day empty"></div>`; }
+  for(let d=1;d<=daysInMonth;d++){
+    const k=`${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dt=new Date(viewYear,viewMonth,d);
+    const wd=dt.getDay();
+    const isA=k===activeKey, isT=k===todK, isV=isVoo(k);
+    let dc='cal-day'; if(isA)dc+=' active'; if(isT)dc+=' today-mark'; if(isV)dc+=' voo';
+    let mc='m-cal-day'; if(isA)mc+=' active'; if(isT)mc+=' today-mark'; if(isV)mc+=' voo';
+    const ind=pillsHTML(k,isA);
+    dC+=`<div class="${dc}" onclick="selectDay('${k}')"><span class="cal-num">${d}</span><span class="cal-wkd">${WEEKDAYS_PT[wd].slice(0,3)}</span><div class="cal-indicators">${ind}</div></div>`;
+    mC+=`<div class="${mc}" onclick="selectDay('${k}')"><span class="m-cal-num">${d}</span><span class="m-cal-wkd">${WEEKDAYS_PT[wd].slice(0,1)}</span><div class="cal-indicators" style="transform:scale(0.85)">${ind}</div></div>`;
+  }
+  document.getElementById('d-calGrid').innerHTML=dC;
+  document.getElementById('m-calGrid').innerHTML=mC;
+}
+
+function aeroSecaoHTML(key, mobile){
+  const d=cache[key]; const aero=d.aeroclube;
+  const pad=mobile?'12px':'16px';
+  const inputClass=mobile?'m-student-input':'turma-input';
+
+  const turmaCards=TURMAS.map(t=>{
+    const tr=aero.turmas[t];
+    const isAtivo=tr.ativo;
+    return `<div class="turma-card ${t}${isAtivo?' ativo':''}" onclick="toggleTurma('${key}','${t}')" style="cursor:pointer;">
+      <div class="turma-header">
+        <span class="turma-pill-lg">${TURMA_LABELS[t]}</span>
+        <span class="turma-nome">${TURMA_NAMES[t]}</span>
+      </div>
+      <div class="turma-body" onclick="event.stopPropagation()">
+        <input class="turma-input${tr.aluno?' filled':''}" placeholder="Nome do aluno..."
+          value="${esc(tr.aluno)}"
+          data-key="${key}" data-turma="${t}" data-field="aluno"
+          oninput="updateTurma(this)" />
+        <input class="turma-input" placeholder="Observações..."
+          value="${esc(tr.obs)}"
+          data-key="${key}" data-turma="${t}" data-field="obs"
+          oninput="updateTurma(this)" />
+      </div>
+    </div>`;
+  }).join('');
+
+  const aeroContent=aero.ativo?`
+    <div class="aero-section">
+      <div class="aero-horario-bar" style="padding:8px ${pad};">
+        <span class="aero-horario-badge">19:00 → 22:40</span>
+        <span style="font-size:12px;color:#1a3a6b;font-weight:500;">horário fixo do Aeroclube</span>
+      </div>
+      <div class="aero-turmas-label" style="padding:10px ${pad} 6px;">Toque nas turmas para ativar/desativar:</div>
+      <div class="turmas-grid" style="padding:0 ${pad} ${pad};">${turmaCards}</div>
+    </div>`:'';
+
+  return `
+    <div class="aero-toggle-bar" style="padding:10px ${pad};">
+      <button class="aero-toggle-btn${aero.ativo?'':' off'}" onclick="toggleAero('${key}')">
+        ${aero.ativo?'✈️ Aeroclube ativado':'✈️ Aeroclube — toque para ativar'}
+      </button>
+    </div>
+    ${aeroContent}`;
+}
+
+function vooHTML(key, pad){
+  const v=isVoo(key);
+  return `<div class="voo-banner" style="padding:8px ${pad};">
+    <span>✈️ ${v?'Dia de voo ativo':'Marcar como dia de voo'}</span>
+    <button class="voo-toggle-btn${v?' ativo':''}" onclick="toggleVoo('${key}')">${v?'✓ Ativo':'Ativar'}</button>
+  </div>`;
+}
+
+async function renderSchedule(){
+  const dayData=await loadDay(activeKey);
+  const dt=keyToDate(activeKey);
+  const wd=dt.getDay();
+  const dayName=WEEKDAYS_PT[wd], suffix=SUFFIXES[wd];
+  const dateStr=`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
+  const count=countAulas(activeKey);
+  document.getElementById('d-headerSub').textContent=`${dateStr} — Aulas de Inglês`;
+  document.getElementById('m-headerSub').textContent=dateStr;
+
+  // DESKTOP
+  const dRows=SLOTS.map(slot=>{
+    const val=dayData.slots[slot]||{student:'',obs:''};
+    const filled=val.student&&val.student.trim()!==''?' filled':'';
+    return `<tr style="border-bottom:1px solid #f0e8c0;">
+      <td style="padding:6px 8px;text-align:center;"><span class="time-badge">${slot}</span></td>
+      <td style="padding:5px 8px;">
         <input type="text" class="student-input${filled}" placeholder="Nome do aluno..."
           value="${esc(val.student)}"
           data-key="${activeKey}" data-slot="${slot}" data-field="student"
-          oninput="updateField(this)" />
+          oninput="updateField(this)" style="width:100%;" />
       </td>
-      <td class="notes-cell">
-        <textarea class="notes-input" placeholder="Observações..."
-          data-key="${activeKey}" data-slot="${slot}" data-field="obs"
-          oninput="updateField(this)">${esc(val.obs)}</textarea>
+      <td style="padding:5px 8px;">
+        <textarea class="obs-input" placeholder="Obs..." data-key="${activeKey}" data-slot="${slot}" data-field="obs" oninput="updateField(this)">${esc(val.obs)}</textarea>
       </td>
     </tr>`;
   }).join('');
 
-  document.getElementById('d-mainContent').innerHTML = `
+  document.getElementById('d-mainContent').innerHTML=`
     <div class="d-day-header">
       <div class="d-day-title">📅 ${dayName}${suffix} — ${dateStr}
-        <span class="d-day-count">${count>0?count+' aluno(s)':'sem alunos agendados'}</span>
+        <span class="d-day-count">${count>0?count+' aula(s)':'sem aulas marcadas'}</span>
       </div>
     </div>
-    <table class="slots-table">
-      <thead><tr><th>Horário</th><th>Aluno</th><th>Observações</th></tr></thead>
-      <tbody>${dRows}</tbody>
-    </table>
-    <div class="d-day-notes">
-      <label>📝 Notas gerais — ${dayName}${suffix}, ${dateStr}</label>
-      <textarea placeholder="Anotações, lembretes..." oninput="updateDayNotes(this)">${esc(dayData.notes||'')}</textarea>
+    ${vooHTML(activeKey,'28px')}
+    <div class="section-lbl" style="padding:10px 28px 6px;">🏫 Aulas regulares</div>
+    <div class="d-slots-wrap">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="background:#1a3a6b;">
+          <th style="color:#f0c040;font-size:11px;padding:8px;width:80px;text-align:center;border-radius:8px 0 0 0;">Horário</th>
+          <th style="color:#f0c040;font-size:11px;padding:8px;text-align:left;">Aluno</th>
+          <th style="color:#f0c040;font-size:11px;padding:8px;text-align:left;border-radius:0 8px 0 0;width:160px;">Observações</th>
+        </tr></thead>
+        <tbody>${dRows}</tbody>
+      </table>
+    </div>
+    ${aeroSecaoHTML(activeKey,false)}
+    <div style="padding:0 16px;">
+      <div class="day-notes-wrap" style="margin:16px 12px 0;">
+        <label>📝 Notas gerais do dia</label>
+        <textarea placeholder="Anotações, lembretes..." oninput="updateDayNotes(this)">${esc(dayData.notes||'')}</textarea>
+      </div>
     </div>`;
 
-  /* ---- MOBILE ---- */
-  document.getElementById('m-dayBanner').innerHTML = `
+  // MOBILE banner
+  document.getElementById('m-dayBanner').innerHTML=`
     <div class="m-day-banner">
       <div>
         <div class="m-day-name">📅 ${dayName}${suffix}</div>
-        <div class="m-day-info">${dateStr} · ${count>0?count+' aluno(s)':'sem alunos'}</div>
+        <div class="m-day-info">${dateStr} · ${count>0?count+' aula(s)':'sem aulas'}</div>
       </div>
-      <button class="m-clear-btn" onclick="clearDay()">🗑 Limpar</button>
+      <button class="m-clear-btn" onclick="clearDay()">🗑</button>
     </div>`;
 
-  const mCards = SLOTS.map(slot => {
-    const val    = dayData.slots[slot]||{student:'',obs:''};
-    const filled = val.student&&val.student.trim()!==''?' filled':'';
-    const booked = val.student&&val.student.trim()!==''?'<span class="m-slot-booked">✓ agendado</span>':'';
+  // MOBILE slots
+  const mCards=SLOTS.map(slot=>{
+    const val=dayData.slots[slot]||{student:'',obs:''};
+    const filled=val.student&&val.student.trim()!==''?' filled':'';
+    const booked=val.student&&val.student.trim()!==''?'<span class="m-slot-booked">✓</span>':'';
     return `<div class="m-slot-card">
-      <div class="m-slot-header">
-        <span class="m-slot-time-badge">${slot}</span>
-        ${booked}
-      </div>
+      <div class="m-slot-header"><span class="m-slot-time-badge">${slot}</span>${booked}</div>
       <div class="m-slot-body">
         <input type="text" class="m-student-input${filled}" placeholder="Nome do aluno..."
           value="${esc(val.student)}"
           data-key="${activeKey}" data-slot="${slot}" data-field="student"
           oninput="updateField(this)" />
-        <textarea class="m-obs-input" placeholder="Observações..."
-          data-key="${activeKey}" data-slot="${slot}" data-field="obs"
-          oninput="updateField(this)">${esc(val.obs)}</textarea>
+        <textarea class="m-obs-input" placeholder="Obs..." data-key="${activeKey}" data-slot="${slot}" data-field="obs" oninput="updateField(this)">${esc(val.obs)}</textarea>
       </div>
     </div>`;
   }).join('');
 
-  document.getElementById('m-slotsList').innerHTML = mCards + `
-    <div class="m-day-notes">
+  document.getElementById('m-slotsList').innerHTML=`
+    ${vooHTML(activeKey,'12px')}
+    <div style="height:10px;"></div>
+    <div class="section-lbl" style="padding:8px 12px;margin:0 0 6px;">🏫 Aulas regulares</div>
+    ${mCards}
+    ${aeroSecaoHTML(activeKey,true)}
+    <div class="day-notes-wrap" style="margin:10px 0 0;">
       <label>📝 Notas do dia</label>
       <textarea placeholder="Anotações, lembretes..." oninput="updateDayNotes(this)">${esc(dayData.notes||'')}</textarea>
     </div>`;
 }
 
-window.updateField = function(el) {
-  const {key,slot,field} = el.dataset;
-  if (!cache[key]) cache[key]=emptyDay();
-  if (!cache[key].slots[slot]) cache[key].slots[slot]={student:'',obs:''};
+window.updateField=function(el){
+  const {key,slot,field}=el.dataset;
+  if(!cache[key])cache[key]=emptyDay();
   cache[key].slots[slot][field]=el.value;
-  if (field==='student') el.classList.toggle('filled',el.value.trim()!=='');
+  if(field==='student') el.classList.toggle('filled',el.value.trim()!=='');
   scheduleSave(key);
-  const cnt=countStudents(key);
-  document.querySelectorAll('.d-day-count,.m-day-info').forEach(el=>{
-    if(el.classList.contains('d-day-count')) el.textContent=cnt>0?cnt+' aluno(s)':'sem alunos agendados';
-  });
   renderCalendar();
 };
 
-window.updateDayNotes = function(el) {
-  if (!cache[activeKey]) cache[activeKey]=emptyDay();
+window.updateTurma=function(el){
+  const {key,turma,field}=el.dataset;
+  if(!cache[key])cache[key]=emptyDay();
+  cache[key].aeroclube.turmas[turma][field]=el.value;
+  if(field==='aluno') el.classList.toggle('filled',el.value.trim()!=='');
+  scheduleSave(key);
+};
+
+window.toggleVoo=async function(key){
+  if(!cache[key])cache[key]=emptyDay();
+  cache[key].voo=!cache[key].voo;
+  scheduleSave(key);
+  renderCalendar();
+  await renderSchedule();
+};
+
+window.toggleAero=async function(key){
+  if(!cache[key])cache[key]=emptyDay();
+  cache[key].aeroclube.ativo=!cache[key].aeroclube.ativo;
+  scheduleSave(key);
+  renderCalendar();
+  await renderSchedule();
+};
+
+window.toggleTurma=async function(key,turma){
+  if(!cache[key])cache[key]=emptyDay();
+  cache[key].aeroclube.turmas[turma].ativo=!cache[key].aeroclube.turmas[turma].ativo;
+  scheduleSave(key);
+  renderCalendar();
+  await renderSchedule();
+};
+
+window.updateDayNotes=function(el){
+  if(!cache[activeKey])cache[activeKey]=emptyDay();
   cache[activeKey].notes=el.value;
   scheduleSave(activeKey);
 };
 
-window.clearDay = async function() {
+window.clearDay=async function(){
   const dt=keyToDate(activeKey);
-  const dateStr=`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
-  if (!confirm(`Deseja limpar todos os dados de ${dateStr}?`)) return;
+  const ds=`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
+  if(!confirm(`Deseja limpar todos os dados de ${ds}?`))return;
   cache[activeKey]=emptyDay();
   await saveDay(activeKey);
   renderCalendar();
   await renderSchedule();
 };
 
-window.saveTeacherName = saveTeacherName;
+window.saveTeacherName=saveTeacherName;
 
-async function init() {
+async function init(){
   await loadTeacherName();
   await renderSchedule();
   renderCalendar();
