@@ -103,6 +103,29 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 .voo-toggle-btn { margin-left: auto; background: #1a3a6b; color: #f0c040; border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; cursor: pointer; font-family: inherit; font-weight: 600; transition: all 0.15s; }
 .voo-toggle-btn.ativo { background: #f0c040; color: #1a3a6b; }
 
+/* FIXO BUTTON */
+.fixo-btn { flex-shrink:0; width:56px; height:30px; border-radius:8px; border:1.5px solid #e0d080; background:#f5f5f5; color:#bbb; font-size:10px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:2px; transition:all 0.15s; font-family:inherit; }
+.fixo-btn:hover { border-color:#d4a800; color:#b38a00; background:#fff8dc; }
+.fixo-btn.ativo { background:#d4a800; border-color:#b38a00; color:#1a3a6b; font-weight:800; }
+
+/* COUNT CARD */
+.count-card { background:linear-gradient(135deg,#0d2347 0%,#1a3a6b 100%); border:2px solid #d4a800; border-radius:12px; padding:12px 18px; margin:12px 16px 0; display:flex; align-items:center; gap:14px; }
+.count-num { font-size:38px; font-weight:800; color:#f0c040; line-height:1; }
+.count-label { font-size:13px; font-weight:600; color:white; }
+.count-sub { font-size:11px; color:#a8c4e8; margin-top:2px; }
+
+/* RESUMO */
+.resumo-section { padding:12px 16px 8px; background:#1a3a6b; border-bottom:3px solid #d4a800; }
+.resumo-title { font-size:11px; font-weight:700; color:#f0c040; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+.resumo-grid { display:flex; flex-wrap:wrap; gap:6px; }
+.resumo-card { background:rgba(255,255,255,0.08); border:1px solid rgba(240,192,64,0.25); border-radius:8px; padding:5px 10px; display:flex; align-items:center; gap:6px; cursor:pointer; transition:all 0.15s; }
+.resumo-card:hover { background:rgba(240,192,64,0.15); }
+.resumo-card.fixo { border-color:#f0c040; }
+.resumo-time { font-size:11px; font-weight:700; color:#f0c040; background:rgba(240,192,64,0.15); padding:2px 7px; border-radius:6px; }
+.resumo-name { font-size:12px; color:white; font-weight:500; }
+.resumo-fixo-badge { font-size:9px; color:#d4a800; background:rgba(212,168,0,0.2); border:1px solid rgba(212,168,0,0.4); padding:1px 5px; border-radius:4px; font-weight:700; }
+.resumo-empty { font-size:12px; color:rgba(255,255,255,0.4); font-style:italic; }
+
 /* DAY NOTES */
 .day-notes-wrap { margin: 0 16px 16px; padding: 12px; background: #fffef5; border: 1.5px solid #d4c070; border-radius: 10px; }
 .day-notes-wrap label { display: block; font-size: 11px; font-weight: 600; color: #7a6820; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -340,7 +363,7 @@ function isMobile(){ return window.innerWidth<=600; }
 
 function emptyDay(){
   const slots={};
-  SLOTS.forEach(s=>slots[s]={student:'',obs:''});
+  SLOTS.forEach(s=>slots[s]={student:'',obs:'',fixo:false});
   const aeroclube={ativo:false, turmas:{}};
   TURMAS.forEach(t=>aeroclube.turmas[t]={ativo:false,aluno:'',obs:''});
   return {slots, notes:'', voo:false, aeroclube};
@@ -367,7 +390,7 @@ function mergeDay(data){
   const def=emptyDay();
   def.voo=data.voo||false;
   def.notes=data.notes||'';
-  if(data.slots) Object.keys(data.slots).forEach(s=>{ if(def.slots[s]) def.slots[s]={...def.slots[s],...data.slots[s]}; });
+  if(data.slots) Object.keys(data.slots).forEach(s=>{ if(def.slots[s]) def.slots[s]={student:data.slots[s].student||'',obs:data.slots[s].obs||'',fixo:data.slots[s].fixo||false}; });
   if(data.aeroclube){
     def.aeroclube.ativo=data.aeroclube.ativo||false;
     if(data.aeroclube.turmas) TURMAS.forEach(t=>{ if(data.aeroclube.turmas[t]) def.aeroclube.turmas[t]={...def.aeroclube.turmas[t],...data.aeroclube.turmas[t]}; });
@@ -488,6 +511,35 @@ function aeroSecaoHTML(key, mobile){
     </div>`;
 }
 
+function countCard(key, dayName, suffix, dateStr){
+  const count=countAulas(key);
+  const msg = count===0?'Nenhuma aula agendada':count===1?'1 aula agendada hoje':count+' aulas agendadas hoje';
+  const emoji = count===0?'📭':count>=8?'🏆':count>=5?'🔥':'📚';
+  return `<div class="count-card">
+    <div class="count-num">${count}</div>
+    <div>
+      <div class="count-label">${emoji} ${msg}</div>
+      <div class="count-sub">📅 ${dayName}${suffix} · ${dateStr}</div>
+    </div>
+  </div>`;
+}
+
+function resumoHTML(key){
+  if(!cache[key]) return '';
+  const aulas=SLOTS.filter(s=>cache[key].slots[s]&&cache[key].slots[s].student&&cache[key].slots[s].student.trim()!=='');
+  if(aulas.length===0) return `<div class="resumo-section"><div class="resumo-title">📋 Resumo do dia</div><div class="resumo-empty">Nenhum aluno agendado ainda</div></div>`;
+  const cards=aulas.map(s=>{
+    const v=cache[key].slots[s];
+    const fixo=v.fixo?'<span class="resumo-fixo-badge">🔒 FIXO</span>':'';
+    return `<div class="resumo-card${v.fixo?' fixo':''}" onclick="document.querySelector('[data-scroll=\'${s}\']') && document.querySelector('[data-scroll=\'${s}\']').scrollIntoView({behavior:'smooth',block:'center'})">
+      <span class="resumo-time">${s}</span>
+      <span class="resumo-name">${esc(v.student)}</span>
+      ${fixo}
+    </div>`;
+  }).join('');
+  return `<div class="resumo-section"><div class="resumo-title">📋 Horários marcados — clique para ir ao horário</div><div class="resumo-grid">${cards}</div></div>`;
+}
+
 async function renderSchedule(){
   const dayData=await loadDay(activeKey);
   const dt=keyToDate(activeKey);
@@ -539,25 +591,32 @@ async function renderSchedule(){
     }
     const val=dayData.slots[slot]||{student:'',obs:''};
     const filled=val.student&&val.student.trim()!==''?' filled':'';
-    dRows+=`<tr style="border-bottom:1px solid #f0e8c0;">
+    const isFixo=val.fixo||false;
+    dRows+=`<tr style="border-bottom:1px solid #f0e8c0;${isFixo?'background:#f5faff;':''}" data-scroll="${slot}">
       <td style="padding:6px 8px;text-align:center;"><span class="time-badge">${slot}</span></td>
       <td style="padding:5px 8px;">
         <input type="text" class="student-input${filled}" placeholder="Nome do aluno..."
           value="${esc(val.student)}"
           data-key="${activeKey}" data-slot="${slot}" data-field="student"
-          oninput="updateField(this)" style="width:100%;" />
+          oninput="updateField(this)" style="width:100%;"
+          ${isFixo?'disabled':''} />
       </td>
       <td style="padding:5px 8px;">
-        <textarea class="obs-input" placeholder="Obs..." data-key="${activeKey}" data-slot="${slot}" data-field="obs" oninput="updateField(this)">${esc(val.obs)}</textarea>
+        <textarea class="obs-input" placeholder="Obs..." data-key="${activeKey}" data-slot="${slot}" data-field="obs" oninput="updateField(this)" ${isFixo?'disabled':''}>${esc(val.obs)}</textarea>
+      </td>
+      <td style="padding:5px 8px;width:64px;">
+        <button class="fixo-btn${isFixo?' ativo':''}" onclick="toggleFixo('${activeKey}','${slot}')" title="${isFixo?'Clique para desbloquear':'Marcar como fixo'}">
+          ${isFixo?'🔒 FIXO':'📌 fixo'}
+        </button>
       </td>
     </tr>`;
   });
 
   document.getElementById('d-mainContent').innerHTML=`
-    <div class="d-day-header">
-      <div class="d-day-title">📅 ${dayName}${suffix} — ${dateStr}
-        <span class="d-day-count">${count>0?count+' aula(s)':'sem aulas marcadas'}</span>
-      </div>
+    ${resumoHTML(activeKey)}
+    ${countCard(activeKey,dayName,suffix,dateStr)}
+    <div class="d-day-header" style="margin-top:12px;">
+      <div class="d-day-title">📅 ${dayName}${suffix} — ${dateStr}</div>
     </div>
     ${botoesTopHTML(activeKey,'28px')}
     <div class="section-lbl" style="padding:10px 28px 6px;">🏫 Aulas regulares</div>
@@ -627,19 +686,28 @@ async function renderSchedule(){
     const val=dayData.slots[slot]||{student:'',obs:''};
     const filled=val.student&&val.student.trim()!==''?' filled':'';
     const booked=val.student&&val.student.trim()!==''?'<span class="m-slot-booked">✓</span>':'';
-    mCards+=`<div class="m-slot-card">
-      <div class="m-slot-header"><span class="m-slot-time-badge">${slot}</span>${booked}</div>
+    const isFixo=val.fixo||false;
+    mCards+=`<div class="m-slot-card" data-scroll="${slot}" style="${isFixo?'opacity:0.9;':''}">
+      <div class="m-slot-header" style="${isFixo?'background:#0d2347;':''}">
+        <span class="m-slot-time-badge">${slot}</span>
+        ${isFixo?'<span style="font-size:10px;color:#f0c040;">🔒 FIXO</span>':booked}
+        <button class="fixo-btn${isFixo?' ativo':''}" onclick="toggleFixo('${activeKey}','${slot}')" style="margin-left:auto;height:24px;font-size:9px;width:48px;">
+          ${isFixo?'🔒':'📌'}
+        </button>
+      </div>
       <div class="m-slot-body">
         <input type="text" class="m-student-input${filled}" placeholder="Nome do aluno..."
           value="${esc(val.student)}"
           data-key="${activeKey}" data-slot="${slot}" data-field="student"
-          oninput="updateField(this)" />
-        <textarea class="m-obs-input" placeholder="Obs..." data-key="${activeKey}" data-slot="${slot}" data-field="obs" oninput="updateField(this)">${esc(val.obs)}</textarea>
+          oninput="updateField(this)" ${isFixo?'disabled':''} />
+        <textarea class="m-obs-input" placeholder="Obs..." data-key="${activeKey}" data-slot="${slot}" data-field="obs" oninput="updateField(this)" ${isFixo?'disabled':''}>${esc(val.obs)}</textarea>
       </div>
     </div>`;
   });
 
   document.getElementById('m-slotsList').innerHTML=`
+    ${resumoHTML(activeKey)}
+    <div style="padding:0 12px;margin:10px 0 4px;">${countCard(activeKey,dayName,suffix,dateStr)}</div>
     ${botoesTopHTML(activeKey,'12px')}
     <div style="height:6px;"></div>
     <div class="section-lbl" style="padding:8px 12px;margin:0 0 6px;">🏫 Aulas regulares</div>
@@ -649,6 +717,13 @@ async function renderSchedule(){
       <textarea placeholder="Anotações, lembretes..." oninput="updateDayNotes(this)">${esc(dayData.notes||'')}</textarea>
     </div>`;
 }
+
+window.toggleFixo=async function(key,slot){
+  if(!cache[key])cache[key]=emptyDay();
+  cache[key].slots[slot].fixo=!cache[key].slots[slot].fixo;
+  scheduleSave(key);
+  await renderSchedule();
+};
 
 window.updateField=function(el){
   const {key,slot,field}=el.dataset;
