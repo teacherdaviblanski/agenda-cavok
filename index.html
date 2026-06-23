@@ -592,7 +592,7 @@ async function renderSchedule(){
     const val=dayData.slots[slot]||{student:'',obs:''};
     const filled=val.student&&val.student.trim()!==''?' filled':'';
     const isFixo=val.fixo||false;
-    dRows+=`<tr style="border-bottom:1px solid #f0e8c0;${isFixo?'background:#f5faff;':''}" data-scroll="${slot}">
+    dRows+=`<tr style="border-bottom:1px solid #f0e8c0;${isFixo?'background:#f5faff;':''}" id="slot-${slot}">
       <td style="padding:6px 8px;text-align:center;"><span class="time-badge">${slot}</span></td>
       <td style="padding:5px 8px;">
         <input type="text" class="student-input${filled}" placeholder="Nome do aluno..."
@@ -687,7 +687,7 @@ async function renderSchedule(){
     const filled=val.student&&val.student.trim()!==''?' filled':'';
     const booked=val.student&&val.student.trim()!==''?'<span class="m-slot-booked">✓</span>':'';
     const isFixo=val.fixo||false;
-    mCards+=`<div class="m-slot-card" data-scroll="${slot}" style="${isFixo?'opacity:0.9;':''}">
+    mCards+=`<div class="m-slot-card" id="slot-${slot}" style="${isFixo?'opacity:0.9;':''}">
       <div class="m-slot-header" style="${isFixo?'background:#0d2347;':''}">
         <span class="m-slot-time-badge">${slot}</span>
         ${isFixo?'<span style="font-size:10px;color:#f0c040;">🔒 FIXO</span>':booked}
@@ -720,8 +720,44 @@ async function renderSchedule(){
 
 window.toggleFixo=async function(key,slot){
   if(!cache[key])cache[key]=emptyDay();
-  cache[key].slots[slot].fixo=!cache[key].slots[slot].fixo;
+  const nowFixo=!cache[key].slots[slot].fixo;
+  cache[key].slots[slot].fixo=nowFixo;
+  const student=cache[key].slots[slot].student;
+  const obs=cache[key].slots[slot].obs;
+
+  // Get day of week and build list of same weekday for current + next month
+  const dt=keyToDate(key);
+  const futureDays=[];
+
+  // Current month remaining + full next month = ~8 weeks max
+  for(let w=1;w<=8;w++){
+    const future=new Date(dt);
+    future.setDate(dt.getDate()+(w*7));
+    // Only include current month and next month
+    const sameMonth=future.getMonth()===dt.getMonth()&&future.getFullYear()===dt.getFullYear();
+    const nextMonth=future.getMonth()===(dt.getMonth()+1)%12&&
+      (dt.getMonth()===11?future.getFullYear()===dt.getFullYear()+1:future.getFullYear()===dt.getFullYear());
+    if(sameMonth||nextMonth) futureDays.push(dateKey(future));
+  }
+
+  const saves=[];
+  for(const fKey of futureDays){
+    if(!cache[fKey]) await loadDay(fKey);
+    if(nowFixo){
+      cache[fKey].slots[slot].fixo=true;
+      cache[fKey].slots[slot].student=student;
+      cache[fKey].slots[slot].obs=obs;
+    } else {
+      if(cache[fKey].slots[slot].fixo){
+        cache[fKey].slots[slot].fixo=false;
+      }
+    }
+    saves.push(saveDay(fKey));
+  }
   scheduleSave(key);
+  await Promise.all(saves);
+  setSyncStatus('synced');
+  renderCalendar();
   await renderSchedule();
 };
 
