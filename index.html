@@ -1,9 +1,4 @@
-<!-- v20260703150001 -->
-<!-- v20260703145459 -->
-<!-- v20260703144657 -->
-<!-- v20260703125656 -->
-<!-- v20260703030512x -->
-<!-- v20260703024456 -->
+<!-- v20260703151440 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -694,9 +689,7 @@ async function renderSchedule(){
           <button class="ebtn feito-btn${v.feito?' on':''}"     onclick="toggleFeito('${activeKey}','${slot}')"     title="Aula feita">✅</button>
           <button class="ebtn fixo-btn${v.fixo?' on':''}"       onclick="toggleFixo('${activeKey}','${slot}')"      title="Fixo">🔒</button>
           <button class="ebtn remark-btn${v.remarcado?' on':''}" onclick="toggleRemarcado('${activeKey}','${slot}')" title="Remarcado">🔄</button>
-          <button class="wa-btn-slot${v.remarcado&&v.student&&getPhone(v.student)?'':' disabled'}"
-            onclick="if(${!!v.remarcado&&!!v.student})sendWA('${esc(v.student).replace(/'/g,\"'\")}','${slot}','${activeKey}')"
-            title="${v.remarcado&&v.student?'WhatsApp: '+v.student:'Marque como remarcado'}">📱</button>
+          <button class="wa-btn-slot${v.remarcado&&v.student&&getPhone(v.student)?'':' disabled'}" onclick="doWA(this)" data-student="${esc(v.student)}" data-slot="${slot}" data-key="${activeKey}" title="WhatsApp">📱</button>
         </div>
       </td>
     </tr>`;
@@ -751,8 +744,7 @@ async function renderSchedule(){
           <button class="ebtn feito-btn${v.feito?' on':''}"     onclick="toggleFeito('${activeKey}','${slot}')"     style="width:30px;height:28px;font-size:14px;">✅</button>
           <button class="ebtn fixo-btn${v.fixo?' on':''}"       onclick="toggleFixo('${activeKey}','${slot}')"      style="width:30px;height:28px;font-size:14px;">🔒</button>
           <button class="ebtn remark-btn${v.remarcado?' on':''}" onclick="toggleRemarcado('${activeKey}','${slot}')" style="width:30px;height:28px;font-size:14px;">🔄</button>
-          <button class="wa-btn-slot${v.remarcado&&v.student&&getPhone(v.student)?'':' disabled'}" style="width:30px;height:28px;font-size:14px;"
-            onclick="if(${v.remarcado&&!!v.student})sendWA('${esc(v.student).replace(/'/g,"\\'")}','${slot}','${activeKey}')">📱</button>
+          <button class="wa-btn-slot${v.remarcado&&v.student&&getPhone(v.student)?'':' disabled'}" style="width:30px;height:28px;font-size:14px;" onclick="doWA(this)" data-student="${esc(v.student)}" data-slot="${slot}" data-key="${activeKey}">📱</button>
         </div>
       </div>
       <div class="m-slot-body">
@@ -940,6 +932,14 @@ function buildWAMsg(studentName, slot, key){
 Podemos confirmar nossa aula ${quando}?
 Thank you!`;
 }
+
+window.doWA = function(btn){
+  const student = btn.dataset.student;
+  const slot    = btn.dataset.slot;
+  const key     = btn.dataset.key;
+  if(!student) return;
+  window.sendWA(student, slot, key);
+};
 
 window.sendWA = function(studentName, slot, key){
   const phone = getPhone(studentName);
