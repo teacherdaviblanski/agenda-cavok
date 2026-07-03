@@ -1,3 +1,4 @@
+<!-- v20260703144657 -->
 <!-- v20260703125656 -->
 <!-- v20260703030512x -->
 <!-- v20260703024456 -->
@@ -703,12 +704,11 @@ async function renderSchedule(){
       <div class="d-day-title">📅 ${dayName}${suffix} — ${dateStr}</div>
     </div>
     ${bannersHTML(activeKey,'28px')}
-    <div class="section-lbl" style="padding:10px 28px 6px;">🏫 Aulas regulares</div>
     <table class="d-table" style="margin:0 12px;width:calc(100% - 24px);">
       <thead><tr>
         <th style="text-align:center;">Hora</th>
         <th>Aluno</th>
-        <th style="text-align:right;">✅ 🔒 🔄</th>
+        <th style="text-align:right;">✅ 🔒 🔄 📱</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
@@ -746,8 +746,8 @@ async function renderSchedule(){
           <button class="ebtn feito-btn${v.feito?' on':''}"     onclick="toggleFeito('${activeKey}','${slot}')"     style="width:30px;height:28px;font-size:14px;">✅</button>
           <button class="ebtn fixo-btn${v.fixo?' on':''}"       onclick="toggleFixo('${activeKey}','${slot}')"      style="width:30px;height:28px;font-size:14px;">🔒</button>
           <button class="ebtn remark-btn${v.remarcado?' on':''}" onclick="toggleRemarcado('${activeKey}','${slot}')" style="width:30px;height:28px;font-size:14px;">🔄</button>
-          <button class="wa-btn-slot${v.remarcado&&v.student?'':' disabled'}" style="width:30px;height:28px;font-size:14px;"
-            onclick="${v.remarcado&&v.student?`sendWA('${esc(v.student)}','${slot}','${activeKey}')`:'void(0)'}">📱</button>
+          <button class="wa-btn-slot${v.remarcado&&v.student&&getPhone(v.student)?'':' disabled'}" style="width:30px;height:28px;font-size:14px;"
+            onclick="if(${v.remarcado&&!!v.student})sendWA('${esc(v.student).replace(/'/g,"\\'")}','${slot}','${activeKey}')">📱</button>
         </div>
       </div>
       <div class="m-slot-body">
@@ -762,7 +762,6 @@ async function renderSchedule(){
     ${resumoHTML(activeKey)}
     <div style="margin:0 0 8px;">${countCard(activeKey,dayName,suffix,dateStr)}</div>
     ${bannersHTML(activeKey,'12px')}
-    <div class="section-lbl" style="padding:8px 12px;margin:6px 0;">🏫 Aulas regulares</div>
     ${mCards}
     <div class="notas-wrap" style="margin:8px 0 0;">
       <label>📝 Notas do dia</label>
