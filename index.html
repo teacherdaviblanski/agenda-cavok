@@ -1,3 +1,4 @@
+<!-- v20260703125656 -->
 <!-- v20260703030512x -->
 <!-- v20260703024456 -->
 <!DOCTYPE html>
@@ -246,6 +247,38 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 @media (max-width:600px) { .desktop{display:none!important} .mobile{display:block!important} }
 @media (min-width:601px) { .desktop{display:block!important} .mobile{display:none!important} }
 
+/* ── CADASTRO MODAL ── */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:1000; display:flex; align-items:center; justify-content:center; padding:16px; }
+.modal-box { background:white; border-radius:16px; width:100%; max-width:500px; max-height:90vh; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,.4); }
+.modal-header { background:linear-gradient(135deg,#1a3a6b,#0d2347); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid #d4a800; }
+.modal-title { font-size:16px; font-weight:700; color:#f0c040; }
+.modal-sub   { font-size:11px; color:#a8c4e8; margin-top:2px; }
+.modal-close { background:transparent; border:1.5px solid rgba(240,192,64,.4); color:#f0c040; width:32px; height:32px; border-radius:8px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; }
+.modal-body  { overflow-y:auto; flex:1; }
+.modal-form  { padding:14px 20px; background:#fffef5; border-bottom:1px solid #f0e8c0; display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; }
+.modal-form .fg { display:flex; flex-direction:column; gap:4px; flex:1; min-width:120px; }
+.modal-form label { font-size:11px; font-weight:600; color:#7a6820; text-transform:uppercase; letter-spacing:.4px; }
+.modal-form input { border:1px solid #e0d080; border-radius:8px; padding:8px 12px; font-size:13px; color:#1a3a6b; background:white; outline:none; font-family:inherit; width:100%; }
+.modal-form input:focus { border-color:#1a3a6b; }
+.modal-form input::placeholder { color:#c0b070; }
+.modal-add { background:#d4a800; color:#1a3a6b; border:none; border-radius:8px; padding:8px 16px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; flex-shrink:0; align-self:flex-end; }
+.modal-add:hover { background:#f0c040; }
+.alunos-list { padding:12px 20px 16px; }
+.alunos-list-title { font-size:11px; font-weight:700; color:#7a6820; text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; }
+.aluno-card { display:flex; align-items:center; gap:10px; padding:10px 14px; border:1.5px solid #e0d080; border-radius:10px; margin-bottom:8px; background:white; }
+.aluno-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#1a3a6b,#2a5a9b); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:#f0c040; flex-shrink:0; }
+.aluno-name  { font-size:13px; font-weight:600; color:#1a3a6b; }
+.aluno-phone { font-size:11px; color:#888; margin-top:2px; }
+.aluno-del { width:30px; height:30px; background:#fff0f0; border:1px solid #f0c0c0; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; flex-shrink:0; }
+.aluno-del:hover { background:#ffe0e0; }
+.no-alunos { font-size:13px; color:#aaa; font-style:italic; padding:8px 0; }
+
+/* WA BUTTON */
+.wa-btn-slot { width:34px; height:32px; background:#25d366; border:none; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:16px; cursor:pointer; flex-shrink:0; transition:all .15s; }
+.wa-btn-slot:hover { background:#20ba5a; transform:scale(1.08); }
+.wa-btn-slot.disabled { background:#e0e0e0; cursor:default; opacity:.5; }
+.wa-btn-slot.disabled:hover { transform:none; background:#e0e0e0; }
+
 /* ── PRINT ── */
 @media print {
   body { background:white; }
@@ -276,6 +309,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
       <div class="sync-wrap"><div class="sync-dot" id="d-dot"></div><span id="d-sync">conectando...</span></div>
       <button class="btn btn-danger" onclick="clearDay()">🗑 Limpar dia</button>
       <button class="btn btn-gold"   onclick="window.print()">🖨 Imprimir</button>
+      <button class="btn btn-gold"   onclick="openCadastro()" title="Cadastro de alunos">⚙️</button>
     </div>
   </div>
 
@@ -327,6 +361,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
     <div style="display:flex;gap:6px;align-items:center;">
       <div class="sync-wrap"><div class="sync-dot" id="m-dot"></div><span id="m-sync"></span></div>
       <button class="btn btn-gold" style="padding:6px 10px;font-size:11px;" onclick="window.print()">🖨</button>
+      <button class="btn btn-gold" style="padding:6px 10px;font-size:11px;" onclick="openCadastro()">⚙️</button>
     </div>
   </div>
   <div class="m-teacher">
@@ -361,6 +396,36 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
   <div id="m-banner"></div>
   <div class="m-slots-bg" id="m-slots"></div>
   <div class="m-footer">Agenda Cavok ✈️ · Sincronizado na nuvem ☁️</div>
+</div>
+
+<!-- CADASTRO MODAL -->
+<div class="modal-overlay" id="cadastroModal" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">⚙️ Cadastro de Alunos</div>
+        <div class="modal-sub">Nome e WhatsApp para envio de mensagens</div>
+      </div>
+      <button class="modal-close" onclick="closeCadastro()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-form">
+        <div class="fg">
+          <label>Nome do aluno</label>
+          <input type="text" id="cad-nome" placeholder="Ex: Dani" />
+        </div>
+        <div class="fg">
+          <label>WhatsApp</label>
+          <input type="tel" id="cad-phone" placeholder="+55 43 99999-9999" />
+        </div>
+        <button class="modal-add" onclick="addAluno()">+ Adicionar</button>
+      </div>
+      <div class="alunos-list">
+        <div class="alunos-list-title">👥 Alunos cadastrados</div>
+        <div id="alunosList"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script type="module">
@@ -678,9 +743,11 @@ async function renderSchedule(){
         <span class="m-slot-time">${slot}</span>
         ${statusLabel?`<span style="font-size:10px;color:white;font-weight:600;">${statusLabel}</span>`:booked}
         <div style="margin-left:auto;display:flex;gap:3px;">
-          <button class="ebtn feito-btn${v.feito?' on':''}"     onclick="toggleFeito('${activeKey}','${slot}')"     style="width:32px;height:28px;font-size:15px;">✅</button>
-          <button class="ebtn fixo-btn${v.fixo?' on':''}"       onclick="toggleFixo('${activeKey}','${slot}')"      style="width:32px;height:28px;font-size:15px;">🔒</button>
-          <button class="ebtn remark-btn${v.remarcado?' on':''}" onclick="toggleRemarcado('${activeKey}','${slot}')" style="width:32px;height:28px;font-size:15px;">🔄</button>
+          <button class="ebtn feito-btn${v.feito?' on':''}"     onclick="toggleFeito('${activeKey}','${slot}')"     style="width:30px;height:28px;font-size:14px;">✅</button>
+          <button class="ebtn fixo-btn${v.fixo?' on':''}"       onclick="toggleFixo('${activeKey}','${slot}')"      style="width:30px;height:28px;font-size:14px;">🔒</button>
+          <button class="ebtn remark-btn${v.remarcado?' on':''}" onclick="toggleRemarcado('${activeKey}','${slot}')" style="width:30px;height:28px;font-size:14px;">🔄</button>
+          <button class="wa-btn-slot${v.remarcado&&v.student?'':' disabled'}" style="width:30px;height:28px;font-size:14px;"
+            onclick="${v.remarcado&&v.student?`sendWA('${esc(v.student)}','${slot}','${activeKey}')`:'void(0)'}">📱</button>
         </div>
       </div>
       <div class="m-slot-body">
@@ -788,8 +855,100 @@ window.clearDay=async function(){
   renderCal(); await renderSchedule();
 };
 
+// ── ALUNOS CADASTRADOS ──
+let alunosDB = {};
+
+async function loadAlunos(){
+  try{
+    const snap = await getDoc(doc(db,'config','alunos'));
+    if(snap.exists()) alunosDB = snap.data().lista||{};
+  }catch(e){}
+  renderAlunosList();
+}
+
+async function saveAlunos(){
+  try{ await setDoc(doc(db,'config','alunos'),{lista:alunosDB}); }catch(e){}
+}
+
+function renderAlunosList(){
+  const el = document.getElementById('alunosList');
+  if(!el) return;
+  const keys = Object.keys(alunosDB);
+  if(!keys.length){ el.innerHTML='<div class="no-alunos">Nenhum aluno cadastrado ainda.</div>'; return; }
+  el.innerHTML = keys.map(nome=>{
+    const phone = alunosDB[nome];
+    const inicial = nome.charAt(0).toUpperCase();
+    return `<div class="aluno-card">
+      <div class="aluno-avatar">${inicial}</div>
+      <div style="flex:1;">
+        <div class="aluno-name">${esc(nome)}</div>
+        <div class="aluno-phone">${esc(phone)}</div>
+      </div>
+      <div class="aluno-del" onclick="delAluno('${esc(nome)}')">🗑️</div>
+    </div>`;
+  }).join('');
+}
+
+window.openCadastro = function(){
+  document.getElementById('cadastroModal').style.display='flex';
+  renderAlunosList();
+};
+window.closeCadastro = function(){
+  document.getElementById('cadastroModal').style.display='none';
+};
+window.addAluno = async function(){
+  const nome  = document.getElementById('cad-nome').value.trim();
+  const phone = document.getElementById('cad-phone').value.trim();
+  if(!nome||!phone){ alert('Preencha o nome e o WhatsApp!'); return; }
+  alunosDB[nome] = phone;
+  await saveAlunos();
+  document.getElementById('cad-nome').value='';
+  document.getElementById('cad-phone').value='';
+  renderAlunosList();
+};
+window.delAluno = async function(nome){
+  if(!confirm(`Remover ${nome}?`)) return;
+  delete alunosDB[nome];
+  await saveAlunos();
+  renderAlunosList();
+};
+
+function getPhone(studentName){
+  if(!studentName) return null;
+  const name = studentName.trim().toLowerCase();
+  const key = Object.keys(alunosDB).find(k=>k.trim().toLowerCase()===name);
+  return key ? alunosDB[key] : null;
+}
+
+function buildWAMsg(studentName, slot, key){
+  const dt = kd(key);
+  const todK = todayKey();
+  const tomK = dk(new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()));
+  const tmrw = new Date(TODAY); tmrw.setDate(TODAY.getDate()+1);
+  const tmrwK = dk(tmrw);
+  const wd = dt.getDay();
+  const wdNames = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+  let quando = '';
+  if(key===todK) quando = `hoje às ${slot}`;
+  else if(key===tmrwK) quando = `${wdNames[wd]} às ${slot}`;
+  else { const ds=`${p2(dt.getDate())}/${p2(dt.getMonth()+1)}`; quando=`${wdNames[wd]} (${ds}) às ${slot}`; }
+  return `Hello! How are you? 😊
+Podemos confirmar nossa aula ${quando}?
+Thank you!`;
+}
+
+window.sendWA = function(studentName, slot, key){
+  const phone = getPhone(studentName);
+  if(!phone){ alert('Número não cadastrado para '+studentName); return; }
+  const msg = buildWAMsg(studentName, slot, key);
+  const num = phone.replace(/\D/g,'');
+  const url = `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+  window.open(url,'_blank');
+};
+
 async function init(){
   await loadTeacher();
+  await loadAlunos();
   await Promise.all([renderSchedule(), preload(viewYear,viewMonth)]);
   sync('synced');
   document.getElementById('loading').style.display='none';
