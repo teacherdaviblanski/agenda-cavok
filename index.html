@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v20260703013728 -->
+<!-- v20260703014536 -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -106,19 +106,19 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 
 /* STATUS BUTTONS */
 .status-boxes { display:flex; gap:3px; flex-shrink:0; }
-.status-btn { width:42px; height:34px; border-radius:7px; border:1.5px solid #e0d080; background:#f5f5f5; color:#bbb; font-size:9px; font-weight:700; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; transition:all 0.15s; font-family:inherit; line-height:1; }
-.status-btn .s-icon { font-size:12px; }
-.status-btn .s-label { font-size:8px; font-weight:700; }
-.status-btn.feito-btn:hover { border-color:#50c080; color:#50c080; background:#f0fff4; }
-.status-btn.feito-btn.ativo { background:#50c080; border-color:#3a9060; color:white; }
-.fixo-btn { width:42px; height:34px; border-radius:7px; border:1.5px solid #e0d080; background:#f5f5f5; color:#bbb; font-size:9px; font-weight:700; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; transition:all 0.15s; font-family:inherit; line-height:1; }
-.fixo-btn .s-icon { font-size:12px; }
-.fixo-btn .s-label { font-size:8px; font-weight:700; }
-.fixo-btn:hover { border-color:#d4a800; color:#b38a00; background:#fff8dc; }
+.sbtn { width:36px; height:32px; border-radius:6px; border:1.5px solid #e0d080; background:#f5f5f5; color:#bbb; font-size:7px; font-weight:700; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; transition:all 0.15s; font-family:inherit; flex-shrink:0; }
+.sbtn .s-icon { font-size:12px; line-height:1; }
+.sbtn .s-label { font-size:6.5px; font-weight:700; }
+.sbtn.feito-btn:hover { border-color:#50c080; color:#50c080; background:#f0fff4; }
+.sbtn.feito-btn.ativo { background:#50c080; border-color:#3a9060; color:white; }
+.fixo-btn { width:36px; height:32px; border-radius:6px; border:1.5px solid #e0d080; background:#f5f5f5; color:#bbb; font-size:7px; font-weight:700; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; transition:all 0.15s; font-family:inherit; flex-shrink:0; }
+.fixo-btn .s-icon { font-size:12px; line-height:1; }
+.fixo-btn .s-label { font-size:6.5px; font-weight:700; }
+.fixo-btn:hover { border-color:#d4a800; color:#d4a800; background:#fff8dc; }
 .fixo-btn.ativo { background:#d4a800; border-color:#b38a00; color:#1a3a6b; }
-.remark-btn { width:42px; height:34px; border-radius:7px; border:1.5px solid #e0d080; background:#f5f5f5; color:#bbb; font-size:9px; font-weight:700; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; transition:all 0.15s; font-family:inherit; line-height:1; }
-.remark-btn .s-icon { font-size:12px; }
-.remark-btn .s-label { font-size:8px; font-weight:700; }
+.remark-btn { width:36px; height:32px; border-radius:6px; border:1.5px solid #e0d080; background:#f5f5f5; color:#bbb; font-size:7px; font-weight:700; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; transition:all 0.15s; font-family:inherit; flex-shrink:0; }
+.remark-btn .s-icon { font-size:12px; line-height:1; }
+.remark-btn .s-label { font-size:6.5px; font-weight:700; }
 .remark-btn:hover { border-color:#e09040; color:#e09040; background:#fff8f0; }
 .remark-btn.ativo { background:#e09040; border-color:#c07020; color:white; }
 .badge-feito { font-size:10px; font-weight:700; color:#3a9060; background:#e0fff0; border:1px solid #a0dbb0; padding:2px 6px; border-radius:5px; flex-shrink:0; }
@@ -639,9 +639,9 @@ async function renderSchedule(){
     <div class="d-slots-wrap">
       <table style="width:100%;border-collapse:collapse;">
         <thead><tr style="background:#1a3a6b;">
-          <th style="color:#f0c040;font-size:11px;padding:8px;width:80px;text-align:center;border-radius:8px 0 0 0;">Horário</th>
+          <th style="color:#f0c040;font-size:11px;padding:8px;width:70px;text-align:center;border-radius:8px 0 0 0;">Hora</th>
           <th style="color:#f0c040;font-size:11px;padding:8px;text-align:left;">Aluno</th>
-          <th style="color:#f0c040;font-size:11px;padding:8px;text-align:left;border-radius:0 8px 0 0;width:160px;">Observações</th>
+          <th style="color:#f0c040;font-size:11px;padding:8px;text-align:right;border-radius:0 8px 0 0;width:120px;">✅ 🔒 🔄</th>
         </tr></thead>
         <tbody>${dRows}</tbody>
       </table>
