@@ -1,3 +1,4 @@
+<!-- v20260703145459 -->
 <!-- v20260703144657 -->
 <!-- v20260703125656 -->
 <!-- v20260703030512x -->
@@ -193,7 +194,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 .d-table { width:100%; border-collapse:collapse; }
 .d-table thead th { background:#1a3a6b; color:#f0c040; font-size:11px; font-weight:600; padding:8px 12px; text-align:left; letter-spacing:.5px; text-transform:uppercase; }
 .d-table thead th:first-child { border-radius:8px 0 0 0; width:70px; text-align:center; }
-.d-table thead th:last-child  { border-radius:0 8px 0 0; width:120px; text-align:right; }
+.d-table thead th:last-child  { border-radius:0 8px 0 0; width:148px; text-align:right; }
 .d-table td { padding:0; }
 
 /* ── MOBILE ── */
@@ -687,7 +688,7 @@ async function renderSchedule(){
           value="${esc(v.student)}" data-key="${activeKey}" data-slot="${slot}" data-field="student"
           oninput="updateField(this)" ${v.fixo||v.feito?'disabled':''}>
       </td>
-      <td style="padding:4px 8px;width:120px;">
+      <td style="padding:4px 8px;width:148px;">
         <div class="emoji-btns" style="justify-content:flex-end;">
           <button class="ebtn feito-btn${v.feito?' on':''}"     onclick="toggleFeito('${activeKey}','${slot}')"     title="Aula feita">✅</button>
           <button class="ebtn fixo-btn${v.fixo?' on':''}"       onclick="toggleFixo('${activeKey}','${slot}')"      title="Fixo">🔒</button>
@@ -708,7 +709,7 @@ async function renderSchedule(){
       <thead><tr>
         <th style="text-align:center;">Hora</th>
         <th>Aluno</th>
-        <th style="text-align:right;">✅ 🔒 🔄 📱</th>
+        <th style="width:148px;"></th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
