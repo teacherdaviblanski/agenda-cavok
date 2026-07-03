@@ -1,5 +1,5 @@
+<!-- v20260703020000 -->
 <!DOCTYPE html>
-<!-- v20260703014536 -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -13,315 +13,335 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-height: 100vh; color: #1a3a6b; }
 
-.btn { padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; font-family: inherit; }
-.btn-gold { background: #d4a800; color: #1a3a6b; }
-.btn-gold:hover { background: #f0c040; }
-.btn-danger { background: transparent; border: 1.5px solid rgba(220,80,80,0.5); color: #f08080; }
-.btn-danger:hover { background: rgba(220,80,80,0.1); }
+/* ── LOADING ── */
+.loading { position:fixed; inset:0; background:rgba(26,58,107,0.92); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; z-index:999; }
+.loading p { color:#f0c040; font-size:15px; font-weight:500; }
+.spinner { width:40px; height:40px; border:4px solid rgba(240,192,64,0.25); border-top-color:#f0c040; border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-.sync-indicator { font-size: 11px; color: #a8c4e8; display: flex; align-items: center; gap: 5px; }
-.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #888; transition: background 0.3s; }
-.sync-dot.syncing { background: #f0c040; animation: pulse 1s infinite; }
-.sync-dot.synced  { background: #50d080; }
-.sync-dot.error   { background: #f08080; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+/* ── SYNC ── */
+.sync-wrap { display:flex; align-items:center; gap:5px; font-size:11px; color:#a8c4e8; }
+.sync-dot { width:8px; height:8px; border-radius:50%; background:#888; transition:background .3s; }
+.sync-dot.syncing { background:#f0c040; animation:pulse 1s infinite; }
+.sync-dot.synced  { background:#50d080; }
+.sync-dot.error   { background:#f08080; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-.loading-overlay { position: fixed; inset: 0; background: rgba(26,58,107,0.9); display: flex; align-items: center; justify-content: center; z-index: 999; flex-direction: column; gap: 16px; }
-.loading-overlay p { color: #f0c040; font-size: 16px; font-weight: 500; }
-.spinner { width: 40px; height: 40px; border: 4px solid rgba(240,192,64,0.3); border-top-color: #f0c040; border-radius: 50%; animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+/* ── SHARED BUTTONS ── */
+.btn { padding:7px 14px; border-radius:8px; font-size:12px; font-weight:500; cursor:pointer; border:none; font-family:inherit; transition:all .15s; }
+.btn-gold { background:#d4a800; color:#1a3a6b; }
+.btn-gold:hover { background:#f0c040; }
+.btn-danger { background:transparent; border:1.5px solid rgba(220,80,80,.5); color:#f08080; }
+.btn-danger:hover { background:rgba(220,80,80,.1); }
 
-/* ===== CALENDAR SHARED ===== */
-.cal-day { background: white; border: 1.5px solid #e0d080; border-radius: 8px; padding: 5px 3px 5px; text-align: center; cursor: pointer; min-height: 62px; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.12s; }
-.cal-day:hover { background: #fff8dc; border-color: #c9a800; transform: translateY(-1px); }
-.cal-day.active { background: #1a3a6b; border-color: #1a3a6b; box-shadow: 0 3px 10px rgba(26,58,107,0.3); }
-.cal-day.active .cal-num { color: #f0c040; }
-.cal-day.active .cal-wkd { color: #a8c4e8; }
-.cal-day.voo { background: #d4a800; border-color: #b38a00; }
-.cal-day.voo .cal-num { color: #1a3a6b; font-weight: 700; }
-.cal-day.voo .cal-wkd { color: #1a3a6b; opacity: 0.7; }
-.cal-day.voo:hover { background: #e0b000; }
-.cal-day.today-mark { border-color: #d4a800; border-width: 2px; }
-.cal-day.today-mark .cal-num { color: #8a5f00; font-weight: 700; }
-.cal-day.active.today-mark .cal-num { color: #f0c040; }
-.cal-day.voo.today-mark { border-color: #1a3a6b; border-width: 2.5px; }
-.cal-day.empty { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
-.cal-num { font-size: 14px; font-weight: 600; color: #1a3a6b; line-height: 1; }
-.cal-wkd { font-size: 9px; color: #888; font-weight: 500; }
-.cal-indicators { display: flex; gap: 2px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 2px; }
-.cal-dot { width: 6px; height: 6px; background: #d4a800; border-radius: 50%; flex-shrink: 0; }
-.cal-dot.on-voo { background: #1a3a6b; }
-.cal-dot.active-day { background: #f0c040; }
-.pill { font-size: 8px; font-weight: 700; padding: 1px 4px; border-radius: 4px; line-height: 1.5; }
-.pill.pp   { background: #dbeafe; color: #1e40af; }
-.pill.pc   { background: #dcfce7; color: #166534; }
-.pill.inva { background: #ede9fe; color: #5b21b6; }
-.pill.cms  { background: #fee2e2; color: #991b1b; }
-.pill.pp.on-active   { background: rgba(219,234,254,0.35); color: #93c5fd; }
-.pill.pc.on-active   { background: rgba(220,252,231,0.35); color: #86efac; }
-.pill.inva.on-active { background: rgba(237,233,254,0.35); color: #c4b5fd; }
-.pill.cms.on-active  { background: rgba(254,226,226,0.35); color: #fca5a5; }
+/* ── CALENDAR CELLS ── */
+.cal-day { background:white; border:1.5px solid #e0d080; border-radius:8px; padding:5px 3px; text-align:center; cursor:pointer; min-height:62px; display:flex; flex-direction:column; align-items:center; gap:2px; transition:all .12s; }
+.cal-day:hover { background:#fff8dc; border-color:#c9a800; transform:translateY(-1px); }
+.cal-day.active { background:#1a3a6b; border-color:#1a3a6b; box-shadow:0 3px 10px rgba(26,58,107,.3); }
+.cal-day.active .cal-num { color:#f0c040; }
+.cal-day.active .cal-wkd { color:#a8c4e8; }
+.cal-day.voo { background:#d4a800; border-color:#b38a00; }
+.cal-day.voo .cal-num { color:#1a3a6b; font-weight:700; }
+.cal-day.voo .cal-wkd { color:#1a3a6b; opacity:.7; }
+.cal-day.today-mark { border-color:#d4a800; border-width:2px; }
+.cal-day.today-mark .cal-num { color:#8a5f00; font-weight:700; }
+.cal-day.active.today-mark .cal-num { color:#f0c040; }
+.cal-day.empty { background:transparent; border-color:transparent; cursor:default; pointer-events:none; }
+.cal-num { font-size:14px; font-weight:600; color:#1a3a6b; line-height:1; }
+.cal-wkd { font-size:9px; color:#888; }
+.cal-indicators { display:flex; gap:2px; align-items:center; justify-content:center; flex-wrap:wrap; margin-top:2px; }
+.cal-dot { width:6px; height:6px; background:#d4a800; border-radius:50%; }
+.pill { font-size:8px; font-weight:700; padding:1px 4px; border-radius:4px; line-height:1.5; }
+.pill.pp   { background:#dbeafe; color:#1e40af; }
+.pill.pc   { background:#dcfce7; color:#166534; }
+.pill.inva { background:#ede9fe; color:#5b21b6; }
+.pill.cms  { background:#fee2e2; color:#991b1b; }
+.pill.pp.on-active   { background:rgba(219,234,254,.35); color:#93c5fd; }
+.pill.pc.on-active   { background:rgba(220,252,231,.35); color:#86efac; }
+.pill.inva.on-active { background:rgba(237,233,254,.35); color:#c4b5fd; }
+.pill.cms.on-active  { background:rgba(254,226,226,.35); color:#fca5a5; }
 
-/* ===== SCHEDULE SHARED ===== */
-.section-lbl { font-size: 11px; font-weight: 600; color: #7a6820; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 16px 6px; background: #fffef5; border-bottom: 1px solid #f0e8c0; display: flex; align-items: center; gap: 6px; }
-.slot-row { display: flex; align-items: center; gap: 8px; padding: 7px 16px; border-bottom: 1px solid #f0e8c0; }
-.slot-row:last-child { border-bottom: none; }
-.time-badge { background: #e8f0fb; border: 1px solid #b5cef0; color: #1a3a6b; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; min-width: 52px; text-align: center; flex-shrink: 0; }
-.student-input { flex: 1; border: 1px solid #e0d080; border-radius: 8px; padding: 7px 11px; font-size: 14px; color: #1a3a6b; background: #fffef5; outline: none; font-family: inherit; transition: border-color 0.15s, background 0.15s; }
-.student-input:focus { border-color: #1a3a6b; background: white; }
-.student-input::placeholder { color: #c0b070; font-size: 13px; }
-.student-input.filled { background: #f0f8ff; border-color: #90b8e0; }
-.obs-input { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 5px 9px; font-size: 12px; color: #5a6a80; background: #fffef5; outline: none; font-family: inherit; resize: none; height: 32px; transition: border-color 0.15s; }
-.obs-input:focus { border-color: #c9a800; }
-.obs-input::placeholder { color: #c0b070; }
+/* ── SLOT ROW ── */
+.slot-row { display:flex; align-items:center; gap:8px; padding:5px 16px; border-bottom:1px solid #f0e8c0; transition:background .1s; }
+.slot-row:last-child { border-bottom:none; }
+.slot-row:hover { background:#fffef5; }
+.slot-row.row-feito     { background:#f0fff4; }
+.slot-row.row-remarcado { background:#fff8f0; }
+.slot-row.row-fixo      { background:#f5faff; }
+.time-badge { background:#e8f0fb; border:1px solid #b5cef0; color:#1a3a6b; padding:3px 7px; border-radius:12px; font-size:11px; font-weight:600; min-width:50px; text-align:center; flex-shrink:0; }
+.aluno-input { flex:1; min-width:0; border:1px solid #e0d080; border-radius:8px; padding:7px 11px; font-size:13px; color:#1a3a6b; background:#fffef5; outline:none; font-family:inherit; transition:border-color .15s,background .15s; }
+.aluno-input:focus  { border-color:#1a3a6b; background:white; }
+.aluno-input::placeholder { color:#c0b070; font-size:12px; }
+.aluno-input.filled { background:#f0f8ff; border-color:#90b8e0; }
+.aluno-input:disabled { background:#f0f4ff; color:#7090c0; border-color:#b0c8e8; cursor:not-allowed; }
+.aluno-input.inp-remarcado { font-style:italic; color:#c08040; background:#fff8f0; border-color:#e0c090; }
 
-/* AEROCLUBE */
-.aero-section { background: #f0f4ff; }
-.aero-toggle-bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #fffef5; border-top: 1px solid #f0e8c0; border-bottom: 1px solid #f0e8c0; }
-.aero-toggle-btn { background: #1a3a6b; color: #f0c040; border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
-.aero-toggle-btn.off { background: #e0d5b0; color: #7a6820; }
-.aero-horario-bar { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: #e8eef7; border-bottom: 1px solid #dce4f5; }
-.aero-horario-badge { background: #1a3a6b; color: #f0c040; padding: 3px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; }
-.aero-turmas-label { font-size: 11px; color: #3a4a7a; padding: 10px 16px 6px; font-weight: 600; }
-.turmas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px 16px; }
-.turma-card { border: 2px solid #e0d5f5; border-radius: 10px; overflow: hidden; cursor: pointer; transition: all 0.15s; opacity: 0.5; }
-.turma-card.ativo { opacity: 1; }
-.turma-header { padding: 8px 10px; display: flex; align-items: center; gap: 6px; }
-.turma-pill-lg { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
-.turma-nome { font-size: 11px; font-weight: 600; }
-.turma-body { background: white; padding: 8px 10px; border-top: 1px solid rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 5px; }
-.turma-input { width: 100%; font-size: 12px; color: #1a3a6b; border: 1px solid #e0d080; border-radius: 6px; padding: 5px 8px; background: #fffef5; outline: none; font-family: inherit; }
-.turma-input::placeholder { color: #c0b070; }
-.turma-input.filled { background: #f0f8ff; border-color: #90b8e0; }
-.turma-card.pp .turma-header { background: #dbeafe; } .turma-card.pp .turma-pill-lg { background: #1e40af; color: white; } .turma-card.pp .turma-nome { color: #1e40af; } .turma-card.pp.ativo { border-color: #1e40af; }
-.turma-card.pc .turma-header { background: #dcfce7; } .turma-card.pc .turma-pill-lg { background: #166534; color: white; } .turma-card.pc .turma-nome { color: #166534; } .turma-card.pc.ativo { border-color: #166534; }
-.turma-card.inva .turma-header { background: #ede9fe; } .turma-card.inva .turma-pill-lg { background: #5b21b6; color: white; } .turma-card.inva .turma-nome { color: #5b21b6; } .turma-card.inva.ativo { border-color: #5b21b6; }
-.turma-card.cms .turma-header { background: #fee2e2; } .turma-card.cms .turma-pill-lg { background: #991b1b; color: white; } .turma-card.cms .turma-nome { color: #991b1b; } .turma-card.cms.ativo { border-color: #991b1b; }
+/* ── EMOJI BUTTONS ── */
+.emoji-btns { display:flex; gap:3px; flex-shrink:0; }
+.ebtn { width:36px; height:34px; border-radius:7px; border:1.5px solid #e0d080; background:#f8f8f8; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:17px; transition:all .15s; flex-shrink:0; }
+.ebtn:hover { transform:scale(1.12); }
+.ebtn.feito-btn:hover  { border-color:#50c080; background:#f0fff4; }
+.ebtn.feito-btn.on     { background:#e8fff0; border-color:#50c080; box-shadow:0 0 0 2px rgba(80,192,128,.25); }
+.ebtn.fixo-btn:hover   { border-color:#d4a800; background:#fff8dc; }
+.ebtn.fixo-btn.on      { background:#fff8dc; border-color:#d4a800; box-shadow:0 0 0 2px rgba(212,168,0,.25); }
+.ebtn.remark-btn:hover { border-color:#e09040; background:#fff8f0; }
+.ebtn.remark-btn.on    { background:#fff0e0; border-color:#e09040; box-shadow:0 0 0 2px rgba(224,144,64,.25); }
 
-/* VOO BANNER */
-.voo-banner { background: #d4a800; padding: 8px 16px; display: flex; align-items: center; gap: 10px; }
-.voo-banner span { font-size: 12px; font-weight: 600; color: #1a3a6b; }
-.voo-toggle-btn { margin-left: auto; background: #1a3a6b; color: #f0c040; border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; cursor: pointer; font-family: inherit; font-weight: 600; transition: all 0.15s; }
-.voo-toggle-btn.ativo { background: #f0c040; color: #1a3a6b; }
-
-/* EMOJI BUTTONS */
-.status-boxes { display:flex; gap:3px; flex-shrink:0; }
-.ebtn { width:38px; height:34px; border-radius:7px; border:1.5px solid #e0d080; background:#f5f5f5; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; transition:all 0.15s; flex-shrink:0; line-height:1; }
-.ebtn:hover { transform:scale(1.1); }
-.ebtn.feito-btn:hover { border-color:#50c080; background:#f0fff4; }
-.ebtn.feito-btn.ativo { background:#e8fff0; border-color:#50c080; box-shadow:0 0 0 2px rgba(80,192,128,0.2); }
-.fixo-btn { width:38px; height:34px; border-radius:7px; border:1.5px solid #e0d080; background:#f5f5f5; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; transition:all 0.15s; flex-shrink:0; line-height:1; }
-.fixo-btn:hover { border-color:#d4a800; background:#fff8dc; transform:scale(1.1); }
-.fixo-btn.ativo { background:#fff8dc; border-color:#d4a800; box-shadow:0 0 0 2px rgba(212,168,0,0.2); }
-.remark-btn { width:38px; height:34px; border-radius:7px; border:1.5px solid #e0d080; background:#f5f5f5; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; transition:all 0.15s; flex-shrink:0; line-height:1; }
-.remark-btn:hover { border-color:#e09040; background:#fff8f0; transform:scale(1.1); }
-.remark-btn.ativo { background:#fff0e0; border-color:#e09040; box-shadow:0 0 0 2px rgba(224,144,64,0.2); }
-
-/* COUNT CARD */
-.count-card { background:linear-gradient(135deg,#0d2347 0%,#1a3a6b 100%); border:2px solid #d4a800; border-radius:12px; padding:12px 18px; margin:12px 16px 0; display:flex; align-items:center; gap:14px; }
-.count-num { font-size:38px; font-weight:800; color:#f0c040; line-height:1; }
+/* ── COUNT CARD ── */
+.count-card { background:linear-gradient(135deg,#0d2347,#1a3a6b); border:2px solid #d4a800; border-radius:12px; padding:12px 18px; margin:12px 16px 0; display:flex; align-items:center; gap:14px; }
+.count-num  { font-size:36px; font-weight:800; color:#f0c040; line-height:1; }
 .count-label { font-size:13px; font-weight:600; color:white; }
-.count-sub { font-size:11px; color:#a8c4e8; margin-top:2px; }
+.count-sub   { font-size:11px; color:#a8c4e8; margin-top:2px; }
 
-/* RESUMO */
+/* ── RESUMO ── */
 .resumo-section { padding:12px 16px 8px; background:#1a3a6b; border-bottom:3px solid #d4a800; }
-.resumo-title { font-size:11px; font-weight:700; color:#f0c040; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
-.resumo-grid { display:flex; flex-wrap:wrap; gap:6px; }
-.resumo-card { background:rgba(255,255,255,0.08); border:1px solid rgba(240,192,64,0.25); border-radius:8px; padding:5px 10px; display:flex; align-items:center; gap:6px; cursor:pointer; transition:all 0.15s; }
-.resumo-card:hover { background:rgba(240,192,64,0.15); }
+.resumo-title   { font-size:11px; font-weight:700; color:#f0c040; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
+.resumo-grid    { display:flex; flex-wrap:wrap; gap:6px; }
+.resumo-card    { background:rgba(255,255,255,.08); border:1px solid rgba(240,192,64,.25); border-radius:8px; padding:5px 10px; display:flex; align-items:center; gap:6px; cursor:pointer; transition:all .15s; }
+.resumo-card:hover { background:rgba(240,192,64,.15); }
 .resumo-card.fixo { border-color:#f0c040; }
-.resumo-time { font-size:11px; font-weight:700; color:#f0c040; background:rgba(240,192,64,0.15); padding:2px 7px; border-radius:6px; }
-.resumo-name { font-size:12px; color:white; font-weight:500; }
-.resumo-fixo-badge { font-size:9px; color:#d4a800; background:rgba(212,168,0,0.2); border:1px solid rgba(212,168,0,0.4); padding:1px 5px; border-radius:4px; font-weight:700; }
-.resumo-empty { font-size:12px; color:rgba(255,255,255,0.4); font-style:italic; }
+.resumo-time    { font-size:11px; font-weight:700; color:#f0c040; background:rgba(240,192,64,.15); padding:2px 7px; border-radius:6px; }
+.resumo-name    { font-size:12px; color:white; font-weight:500; }
+.resumo-fixo-badge { font-size:9px; color:#d4a800; background:rgba(212,168,0,.2); border:1px solid rgba(212,168,0,.4); padding:1px 5px; border-radius:4px; font-weight:700; }
+.resumo-empty   { font-size:12px; color:rgba(255,255,255,.4); font-style:italic; }
 
-/* DAY NOTES */
-.day-notes-wrap { margin: 0 16px 16px; padding: 12px; background: #fffef5; border: 1.5px solid #d4c070; border-radius: 10px; }
-.day-notes-wrap label { display: block; font-size: 11px; font-weight: 600; color: #7a6820; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-.day-notes-wrap textarea { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 9px 11px; font-size: 14px; color: #1a3a6b; background: white; outline: none; font-family: inherit; resize: vertical; min-height: 60px; }
+/* ── VOO + AERO BANNER ── */
+.banner-row  { display:flex; flex-direction:column; gap:8px; padding:10px 16px; background:#fffef5; border-bottom:1px solid #f0e8c0; }
+.banner-item { display:flex; align-items:center; justify-content:space-between; border-radius:10px; padding:10px 14px; border:1.5px solid #d4c070; background:#f5f0e0; }
+.banner-item.voo-on  { background:#d4a800; border-color:#b38a00; }
+.banner-item.aero-on { background:#1a3a6b; border-color:#0d2347; }
+.banner-label { font-size:13px; font-weight:600; }
+.banner-item.voo-on  .banner-label { color:#1a3a6b; }
+.banner-item.aero-on .banner-label { color:#f0c040; }
+.banner-item:not(.voo-on):not(.aero-on) .banner-label { color:#7a6820; }
+.toggle-btn { border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; min-width:80px; }
+.toggle-btn.off { background:#e0d5b0; color:#7a6820; }
+.toggle-btn.voo-on  { background:#1a3a6b; color:#f0c040; }
+.toggle-btn.aero-on { background:#f0c040; color:#1a3a6b; }
 
-/* ===== DESKTOP ===== */
-.desktop-wrap { display: none; padding: 20px; }
-.desktop-wrap .container { max-width: 880px; margin: 0 auto; }
+/* ── AEROCLUBE SECTION ── */
+.aero-section   { background:#f0f4ff; }
+.aero-block-bar { display:flex; align-items:center; gap:10px; padding:8px 16px; background:#fff8e0; border-top:2px solid #d4a800; border-bottom:2px solid #d4a800; }
+.aero-block-badge { background:#d4a800; color:#1a3a6b; font-size:12px; font-weight:700; padding:4px 12px; border-radius:10px; }
+.aero-block-text  { font-size:13px; font-weight:600; color:#7a5f00; }
+.aero-block-sub   { font-size:11px; color:#b38a00; }
+.aero-turmas-label { font-size:11px; font-weight:700; color:#3a4a7a; text-transform:uppercase; letter-spacing:.5px; padding:10px 16px 6px; }
+.turmas-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:0 16px 16px; }
+.turma-card { border:2px solid #e0d5f5; border-radius:10px; overflow:hidden; cursor:pointer; opacity:.5; transition:all .15s; }
+.turma-card.on { opacity:1; }
+.turma-header { padding:8px 10px; display:flex; align-items:center; gap:6px; }
+.turma-pill   { font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; }
+.turma-nome   { font-size:11px; font-weight:600; }
+.turma-body   { background:white; padding:8px 10px; border-top:1px solid rgba(0,0,0,.06); display:flex; flex-direction:column; gap:5px; }
+.turma-input  { width:100%; font-size:12px; color:#1a3a6b; border:1px solid #e0d080; border-radius:6px; padding:5px 8px; background:#fffef5; outline:none; font-family:inherit; }
+.turma-input::placeholder { color:#c0b070; }
+.turma-input.filled { background:#f0f8ff; border-color:#90b8e0; }
+.turma-card.pp   .turma-header { background:#dbeafe; } .turma-card.pp   .turma-pill { background:#1e40af; color:white; } .turma-card.pp   .turma-nome { color:#1e40af; } .turma-card.pp.on   { border-color:#1e40af; }
+.turma-card.pc   .turma-header { background:#dcfce7; } .turma-card.pc   .turma-pill { background:#166534; color:white; } .turma-card.pc   .turma-nome { color:#166534; } .turma-card.pc.on   { border-color:#166534; }
+.turma-card.inva .turma-header { background:#ede9fe; } .turma-card.inva .turma-pill { background:#5b21b6; color:white; } .turma-card.inva .turma-nome { color:#5b21b6; } .turma-card.inva.on { border-color:#5b21b6; }
+.turma-card.cms  .turma-header { background:#fee2e2; } .turma-card.cms  .turma-pill { background:#991b1b; color:white; } .turma-card.cms  .turma-nome { color:#991b1b; } .turma-card.cms.on  { border-color:#991b1b; }
 
-.d-header { background: linear-gradient(135deg, #1a3a6b 0%, #0d2347 100%); border-radius: 16px 16px 0 0; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: 4px solid #d4a800; }
-.d-header-left { display: flex; align-items: center; gap: 14px; }
-.d-header h1 { font-size: 20px; font-weight: 600; color: #f0c040; }
-.d-header p { font-size: 12px; color: #a8c4e8; margin-top: 2px; }
-.d-header-right { display: flex; gap: 8px; align-items: center; }
+/* ── NOTAS ── */
+.notas-wrap { margin:12px 16px; padding:12px; background:#fffef5; border:1.5px solid #d4c070; border-radius:10px; }
+.notas-wrap label { display:block; font-size:11px; font-weight:600; color:#7a6820; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px; }
+.notas-wrap textarea { width:100%; border:1px solid #e0d080; border-radius:8px; padding:9px 11px; font-size:14px; color:#1a3a6b; background:white; outline:none; font-family:inherit; resize:vertical; min-height:60px; }
 
-.d-teacher-bar { background: #f5f0e0; padding: 8px 28px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #d4c070; }
-.d-teacher-bar label { font-size: 12px; color: #7a6820; font-weight: 500; white-space: nowrap; }
-.d-teacher-bar input { border: none; background: transparent; font-size: 14px; color: #1a3a6b; font-weight: 500; flex: 1; outline: none; font-family: inherit; }
-.d-teacher-bar input::placeholder { color: #b0a060; font-weight: 400; }
+/* ── SECTION LABEL ── */
+.section-lbl { font-size:11px; font-weight:600; color:#7a6820; text-transform:uppercase; letter-spacing:.5px; padding:10px 16px 6px; background:#fffef5; border-bottom:1px solid #f0e8c0; display:flex; align-items:center; gap:6px; }
 
-.d-month-nav { background: #1a3a6b; padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.d-month-label { font-size: 16px; font-weight: 600; color: #f0c040; min-width: 200px; text-align: center; }
-.d-month-arrow { background: rgba(240,192,64,0.15); border: 1.5px solid rgba(240,192,64,0.4); color: #f0c040; width: 34px; height: 34px; border-radius: 8px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: inherit; }
-.d-month-arrow:hover { background: rgba(240,192,64,0.28); }
-.d-today-btn { background: rgba(240,192,64,0.15); border: 1.5px solid rgba(240,192,64,0.4); color: #f0c040; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; }
-.d-today-btn:hover { background: rgba(240,192,64,0.28); }
+/* ── LEGEND ── */
+.legend-bar { display:flex; gap:14px; flex-wrap:wrap; padding:8px 28px; background:#f5f0e0; border-top:1px solid #e0d080; align-items:center; font-size:11px; color:#7a6820; }
+.legend-item { display:flex; align-items:center; gap:5px; }
+.legend-dot { width:8px; height:8px; border-radius:50%; background:#d4a800; }
+.legend-box { width:14px; height:14px; border-radius:3px; background:#d4a800; }
 
-.d-cal-wrap { background: #f5f0e0; padding: 14px 28px 16px; border-bottom: 3px solid #d4a800; }
-.d-cal-wds { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 6px; }
-.d-cal-wd { text-align: center; font-size: 11px; font-weight: 600; color: #7a6820; padding: 4px 0; text-transform: uppercase; letter-spacing: 0.5px; }
-.d-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+/* ── DESKTOP ── */
+.desktop { display:none; padding:20px; }
+.desktop .container { max-width:880px; margin:0 auto; }
 
-.d-main { background: white; padding: 0 0 20px; border-radius: 0 0 16px 16px; overflow: hidden; }
-.d-day-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px 12px; border-bottom: 3px solid #f0c040; }
-.d-day-title { font-size: 18px; font-weight: 600; color: #1a3a6b; display: flex; align-items: center; gap: 8px; }
-.d-day-count { font-size: 12px; color: #888; font-weight: 400; }
-.d-slots-wrap { padding: 0 12px; }
-.d-footer { text-align: center; padding: 12px; font-size: 11px; color: #999; margin-top: 6px; }
+.d-header { background:linear-gradient(135deg,#1a3a6b,#0d2347); border-radius:16px 16px 0 0; padding:18px 28px; display:flex; align-items:center; justify-content:space-between; border-bottom:4px solid #d4a800; }
+.d-header-left { display:flex; align-items:center; gap:14px; }
+.d-header h1 { font-size:20px; font-weight:600; color:#f0c040; }
+.d-header p  { font-size:12px; color:#a8c4e8; margin-top:2px; }
+.d-header-right { display:flex; gap:8px; align-items:center; }
 
-/* legend desktop */
-.d-legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 8px 28px; background: #f5f0e0; border-top: 1px solid #e0d080; align-items: center; font-size: 11px; color: #7a6820; }
-.d-legend-item { display: flex; align-items: center; gap: 5px; }
-.d-legend-dot { width: 8px; height: 8px; border-radius: 50%; background: #d4a800; }
-.d-legend-box { width: 14px; height: 14px; border-radius: 3px; background: #d4a800; }
+.d-teacher { background:#f5f0e0; padding:8px 28px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #d4c070; }
+.d-teacher label { font-size:12px; color:#7a6820; font-weight:500; white-space:nowrap; }
+.d-teacher input { border:none; background:transparent; font-size:14px; color:#1a3a6b; font-weight:500; flex:1; outline:none; font-family:inherit; }
+.d-teacher input::placeholder { color:#b0a060; font-weight:400; }
 
-/* ===== MOBILE ===== */
-.mobile-wrap { display: none; }
-.m-header { background: #1a3a6b; padding: 12px 16px; border-bottom: 3px solid #d4a800; display: flex; align-items: center; justify-content: space-between; }
-.m-header-left { display: flex; align-items: center; gap: 10px; }
-.m-title { font-size: 15px; font-weight: 600; color: #f0c040; }
-.m-subtitle { font-size: 10px; color: #a8c4e8; }
-.m-teacher-bar { background: #f5f0e0; padding: 7px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #d4c070; }
-.m-teacher-bar label { font-size: 12px; color: #7a6820; font-weight: 500; white-space: nowrap; }
-.m-teacher-bar input { border: none; background: transparent; font-size: 13px; color: #1a3a6b; font-weight: 500; flex: 1; outline: none; font-family: inherit; }
-.m-month-nav { background: #1a3a6b; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
-.m-month-label { font-size: 14px; font-weight: 600; color: #f0c040; }
-.m-month-arrow { background: rgba(240,192,64,0.15); border: 1.5px solid rgba(240,192,64,0.4); color: #f0c040; width: 32px; height: 32px; border-radius: 8px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: inherit; }
-.m-today-btn { background: rgba(240,192,64,0.15); border: 1.5px solid rgba(240,192,64,0.4); color: #f0c040; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer; font-family: inherit; }
-.m-cal-wrap { background: #f5f0e0; padding: 10px 12px 12px; border-bottom: 3px solid #d4a800; }
-.m-cal-wds { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 4px; }
-.m-cal-wd { text-align: center; font-size: 9px; font-weight: 600; color: #7a6820; padding: 2px 0; }
-.m-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
-.m-cal-day { background: white; border: 1px solid #e0d080; border-radius: 6px; padding: 4px 2px 4px; text-align: center; cursor: pointer; min-height: 52px; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.12s; }
-.m-cal-day:hover { background: #fff8dc; }
-.m-cal-day.active { background: #1a3a6b; border-color: #1a3a6b; }
-.m-cal-day.active .m-cal-num { color: #f0c040; }
-.m-cal-day.active .m-cal-wkd { color: #a8c4e8; }
-.m-cal-day.voo { background: #d4a800; border-color: #b38a00; }
-.m-cal-day.voo .m-cal-num { color: #1a3a6b; font-weight: 700; }
-.m-cal-day.voo .m-cal-wkd { color: #1a3a6b; opacity: 0.7; }
-.m-cal-day.today-mark { border-color: #d4a800; border-width: 2px; }
-.m-cal-day.today-mark .m-cal-num { color: #8a5f00; font-weight: 700; }
-.m-cal-day.active.today-mark .m-cal-num { color: #f0c040; }
-.m-cal-day.empty { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
-.m-cal-num { font-size: 13px; font-weight: 600; color: #1a3a6b; line-height: 1; }
-.m-cal-wkd { font-size: 8px; color: #888; }
-.m-day-banner { background: white; padding: 10px 16px; border-bottom: 2px solid #f0c040; display: flex; align-items: center; justify-content: space-between; }
-.m-day-name { font-size: 14px; font-weight: 600; color: #1a3a6b; }
-.m-day-info { font-size: 10px; color: #888; margin-top: 2px; }
-.m-clear-btn { background: transparent; border: 1px solid rgba(220,80,80,0.4); color: #f08080; border-radius: 8px; padding: 5px 10px; font-size: 11px; cursor: pointer; font-family: inherit; }
-.m-slots-bg { background: #e8eef7; padding: 10px 12px 20px; }
-.m-slot-card { border-radius: 10px; margin-bottom: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(26,58,107,0.1); }
-.m-slot-header { background: #1a3a6b; color: #f0c040; font-size: 12px; font-weight: 600; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; }
-.m-slot-time-badge { background: rgba(240,192,64,0.2); border: 1px solid rgba(240,192,64,0.35); padding: 3px 10px; border-radius: 12px; font-size: 12px; }
-.m-slot-booked { font-size: 10px; color: #80e0a0; }
-.m-slot-body { background: white; padding: 10px 12px; display: flex; flex-direction: column; gap: 5px; }
-.m-student-input { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 10px 12px; font-size: 15px; color: #1a3a6b; background: #fffef5; outline: none; font-family: inherit; -webkit-appearance: none; }
-.m-student-input:focus { border-color: #1a3a6b; background: white; }
-.m-student-input::placeholder { color: #c0b070; }
-.m-student-input.filled { background: #f0f8ff; border-color: #90b8e0; }
-.m-obs-input { width: 100%; border: 1px solid #e0d080; border-radius: 8px; padding: 7px 10px; font-size: 13px; color: #5a6a80; background: #fffef5; outline: none; font-family: inherit; resize: none; height: 34px; -webkit-appearance: none; }
-.m-obs-input::placeholder { color: #c0b070; }
-.m-footer { text-align: center; padding: 10px; font-size: 10px; color: #999; background: #e8eef7; }
-.m-legend { display: flex; gap: 10px; flex-wrap: wrap; padding: 8px 12px; background: #f5f0e0; border-bottom: 1px solid #e0d080; font-size: 10px; color: #7a6820; align-items: center; }
-.m-legend-item { display: flex; align-items: center; gap: 4px; }
+.d-month-nav { background:#1a3a6b; padding:12px 28px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.d-month-label { font-size:16px; font-weight:600; color:#f0c040; min-width:200px; text-align:center; }
+.d-month-arrow { background:rgba(240,192,64,.15); border:1.5px solid rgba(240,192,64,.4); color:#f0c040; width:34px; height:34px; border-radius:8px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; transition:all .15s; }
+.d-month-arrow:hover { background:rgba(240,192,64,.28); }
+.d-today-btn { background:rgba(240,192,64,.15); border:1.5px solid rgba(240,192,64,.4); color:#f0c040; padding:6px 14px; border-radius:8px; font-size:12px; font-weight:500; cursor:pointer; font-family:inherit; transition:all .15s; }
+.d-today-btn:hover { background:rgba(240,192,64,.28); }
 
-@media (max-width: 600px) { .desktop-wrap{display:none!important} .mobile-wrap{display:block!important} }
-@media (min-width: 601px) { .desktop-wrap{display:block!important} .mobile-wrap{display:none!important} }
+.d-cal-wrap { background:#f5f0e0; padding:14px 28px 16px; border-bottom:3px solid #d4a800; }
+.d-cal-wds  { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:6px; }
+.d-cal-wd   { text-align:center; font-size:11px; font-weight:600; color:#7a6820; padding:4px 0; text-transform:uppercase; letter-spacing:.5px; }
+.d-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+
+.d-main { background:white; border-radius:0 0 16px 16px; overflow:hidden; }
+.d-day-header { display:flex; align-items:center; justify-content:space-between; padding:14px 28px 12px; border-bottom:3px solid #f0c040; }
+.d-day-title  { font-size:17px; font-weight:600; color:#1a3a6b; display:flex; align-items:center; gap:8px; }
+.d-footer { text-align:center; padding:12px; font-size:11px; color:#999; margin-top:6px; }
+
+.d-table { width:100%; border-collapse:collapse; }
+.d-table thead th { background:#1a3a6b; color:#f0c040; font-size:11px; font-weight:600; padding:8px 12px; text-align:left; letter-spacing:.5px; text-transform:uppercase; }
+.d-table thead th:first-child { border-radius:8px 0 0 0; width:70px; text-align:center; }
+.d-table thead th:last-child  { border-radius:0 8px 0 0; width:120px; text-align:right; }
+.d-table td { padding:0; }
+
+/* ── MOBILE ── */
+.mobile { display:none; }
+.m-header { background:#1a3a6b; padding:12px 16px; border-bottom:3px solid #d4a800; display:flex; align-items:center; justify-content:space-between; }
+.m-header-left { display:flex; align-items:center; gap:10px; }
+.m-title  { font-size:15px; font-weight:600; color:#f0c040; }
+.m-sub    { font-size:10px; color:#a8c4e8; }
+.m-teacher { background:#f5f0e0; padding:7px 16px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #d4c070; }
+.m-teacher label { font-size:12px; color:#7a6820; font-weight:500; white-space:nowrap; }
+.m-teacher input { border:none; background:transparent; font-size:13px; color:#1a3a6b; font-weight:500; flex:1; outline:none; font-family:inherit; }
+.m-month-nav { background:#1a3a6b; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; }
+.m-month-label { font-size:14px; font-weight:600; color:#f0c040; }
+.m-month-arrow { background:rgba(240,192,64,.15); border:1.5px solid rgba(240,192,64,.4); color:#f0c040; width:32px; height:32px; border-radius:8px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; }
+.m-today-btn   { background:rgba(240,192,64,.15); border:1.5px solid rgba(240,192,64,.4); color:#f0c040; padding:5px 12px; border-radius:6px; font-size:11px; font-weight:500; cursor:pointer; font-family:inherit; }
+.m-cal-wrap { background:#f5f0e0; padding:10px 12px 12px; border-bottom:3px solid #d4a800; }
+.m-cal-wds  { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:4px; }
+.m-cal-wd   { text-align:center; font-size:9px; font-weight:600; color:#7a6820; padding:2px 0; }
+.m-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+.m-cal-day  { background:white; border:1px solid #e0d080; border-radius:6px; padding:4px 2px; text-align:center; cursor:pointer; min-height:50px; display:flex; flex-direction:column; align-items:center; gap:2px; transition:all .12s; }
+.m-cal-day:hover { background:#fff8dc; }
+.m-cal-day.active { background:#1a3a6b; border-color:#1a3a6b; }
+.m-cal-day.active .m-cal-num { color:#f0c040; }
+.m-cal-day.active .m-cal-wkd { color:#a8c4e8; }
+.m-cal-day.voo { background:#d4a800; border-color:#b38a00; }
+.m-cal-day.voo .m-cal-num { color:#1a3a6b; font-weight:700; }
+.m-cal-day.today-mark { border-color:#d4a800; border-width:2px; }
+.m-cal-day.today-mark .m-cal-num { color:#8a5f00; font-weight:700; }
+.m-cal-day.active.today-mark .m-cal-num { color:#f0c040; }
+.m-cal-day.empty { background:transparent; border-color:transparent; cursor:default; pointer-events:none; }
+.m-cal-num { font-size:13px; font-weight:600; color:#1a3a6b; line-height:1; }
+.m-cal-wkd { font-size:8px; color:#888; }
+.m-legend  { display:flex; gap:8px; flex-wrap:wrap; padding:7px 12px; background:#f5f0e0; border-bottom:1px solid #e0d080; font-size:10px; color:#7a6820; align-items:center; }
+.m-legend-item { display:flex; align-items:center; gap:3px; }
+.m-day-banner { background:white; padding:10px 16px; border-bottom:2px solid #f0c040; display:flex; align-items:center; justify-content:space-between; }
+.m-day-name { font-size:14px; font-weight:600; color:#1a3a6b; }
+.m-day-info { font-size:10px; color:#888; margin-top:2px; }
+.m-slots-bg { background:#e8eef7; padding:10px 12px 20px; }
+.m-slot-card { border-radius:10px; margin-bottom:8px; overflow:hidden; box-shadow:0 1px 4px rgba(26,58,107,.1); }
+.m-slot-header { background:#1a3a6b; color:#f0c040; font-size:12px; font-weight:600; padding:8px 12px; display:flex; align-items:center; gap:8px; }
+.m-slot-time { background:rgba(240,192,64,.2); border:1px solid rgba(240,192,64,.35); padding:3px 10px; border-radius:12px; font-size:12px; }
+.m-slot-body { background:white; padding:9px 12px; display:flex; flex-direction:column; gap:5px; }
+.m-aluno-input { width:100%; border:1px solid #e0d080; border-radius:8px; padding:9px 12px; font-size:15px; color:#1a3a6b; background:#fffef5; outline:none; font-family:inherit; -webkit-appearance:none; }
+.m-aluno-input:focus { border-color:#1a3a6b; background:white; }
+.m-aluno-input::placeholder { color:#c0b070; }
+.m-aluno-input.filled { background:#f0f8ff; border-color:#90b8e0; }
+.m-aluno-input:disabled { background:#f0f4ff; color:#7090c0; border-color:#b0c8e8; }
+.m-aluno-input.inp-remarcado { font-style:italic; color:#c08040; background:#fff8f0; }
+.m-footer { text-align:center; padding:10px; font-size:10px; color:#999; background:#e8eef7; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:600px) { .desktop{display:none!important} .mobile{display:block!important} }
+@media (min-width:601px) { .desktop{display:block!important} .mobile{display:none!important} }
+
+/* ── PRINT ── */
 @media print {
-  body{background:white}
-  .d-header{background:#1a3a6b!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:0}
-  .d-month-nav,.d-cal-wrap,.d-header-right,.d-footer,.loading-overlay,.d-legend,.voo-banner,.aero-toggle-bar{display:none!important}
-  .d-main{padding:12px} .desktop-wrap{padding:0} .desktop-wrap .container{max-width:100%}
-  @page{margin:1.5cm}
+  body { background:white; }
+  .d-header { background:#1a3a6b!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; border-radius:0; }
+  .d-month-nav,.d-cal-wrap,.d-header-right,.d-footer,.loading,.legend-bar,.banner-row,.aero-section { display:none!important; }
+  .d-main { padding:8px; } .desktop { padding:0; }
+  .desktop .container { max-width:100%; }
+  @page { margin:1.5cm; }
 }
 </style>
 </head>
 <body>
 
-<div class="loading-overlay" id="loadingOverlay">
+<div class="loading" id="loading">
   <div class="spinner"></div>
   <p>Conectando à nuvem...</p>
 </div>
 
-<!-- ===== DESKTOP ===== -->
-<div class="desktop-wrap" id="desktopWrap">
+<!-- ══════════ DESKTOP ══════════ -->
+<div class="desktop" id="desktopWrap">
  <div class="container">
   <div class="d-header">
     <div class="d-header-left">
-      <img src="logo.png" alt="Logo Cavok" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:2px solid #d4a800;">
-      <div><h1>Agenda Cavok</h1><p id="d-headerSub">Aulas de Inglês</p></div>
+      <img src="logo.png" alt="Cavok" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:2px solid #d4a800;">
+      <div><h1>Agenda Cavok</h1><p id="d-sub">Aulas de Inglês</p></div>
     </div>
     <div class="d-header-right">
-      <div class="sync-indicator"><div class="sync-dot" id="d-syncDot"></div><span id="d-syncLabel">conectando...</span></div>
+      <div class="sync-wrap"><div class="sync-dot" id="d-dot"></div><span id="d-sync">conectando...</span></div>
       <button class="btn btn-danger" onclick="clearDay()">🗑 Limpar dia</button>
-      <button class="btn btn-gold" onclick="window.print()">🖨 Imprimir</button>
+      <button class="btn btn-gold"   onclick="window.print()">🖨 Imprimir</button>
     </div>
   </div>
-  <div class="d-teacher-bar">
+
+  <div class="d-teacher">
     <label>Professor(a):</label>
-    <input type="text" id="d-teacherName" placeholder="Digite seu nome aqui..." oninput="saveTeacherName()" />
+    <input type="text" id="d-teacher" placeholder="Digite seu nome..." oninput="saveTeacher()">
   </div>
+
   <div class="d-month-nav">
     <button class="d-month-arrow" onclick="changeMonth(-1)">&#8592;</button>
-    <span class="d-month-label" id="d-monthLabel"></span>
+    <span class="d-month-label" id="d-month"></span>
     <button class="d-month-arrow" onclick="changeMonth(1)">&#8594;</button>
-    <button class="d-today-btn" onclick="goToday()">Hoje</button>
+    <button class="d-today-btn"   onclick="goToday()">Hoje</button>
   </div>
+
   <div class="d-cal-wrap">
     <div class="d-cal-wds">
       <div class="d-cal-wd">Dom</div><div class="d-cal-wd">Seg</div><div class="d-cal-wd">Ter</div>
       <div class="d-cal-wd">Qua</div><div class="d-cal-wd">Qui</div><div class="d-cal-wd">Sex</div><div class="d-cal-wd">Sáb</div>
     </div>
-    <div class="d-cal-grid" id="d-calGrid"></div>
+    <div class="d-cal-grid" id="d-cal"></div>
   </div>
-  <div class="d-legend">
+
+  <div class="legend-bar">
     <span>Legenda:</span>
-    <div class="d-legend-item"><div class="d-legend-dot"></div> Aula marcada</div>
-    <div class="d-legend-item"><span class="pill pp">PP</span> Piloto Privado</div>
-    <div class="d-legend-item"><span class="pill pc">PC</span> Piloto Comercial</div>
-    <div class="d-legend-item"><span class="pill inva">IN</span> INVA</div>
-    <div class="d-legend-item"><span class="pill cms">CM</span> CMS</div>
-    <div class="d-legend-item"><div class="d-legend-box"></div> Dia de voo</div>
+    <div class="legend-item"><div class="legend-dot"></div> Aula</div>
+    <div class="legend-item"><span class="pill pp">PP</span> Piloto Privado</div>
+    <div class="legend-item"><span class="pill pc">PC</span> Piloto Comercial</div>
+    <div class="legend-item"><span class="pill inva">IN</span> INVA</div>
+    <div class="legend-item"><span class="pill cms">CM</span> CMS</div>
+    <div class="legend-item"><div class="legend-box"></div> Voo</div>
+    <div class="legend-item">✅ Feita &nbsp; 🔒 Fixo &nbsp; 🔄 Remarcado</div>
   </div>
-  <div class="d-main" id="d-mainContent"></div>
+
+  <div class="d-main" id="d-main"></div>
   <div class="d-footer">Agenda Cavok ✈️ · Dados sincronizados na nuvem</div>
  </div>
 </div>
 
-<!-- ===== MOBILE ===== -->
-<div class="mobile-wrap" id="mobileWrap">
+<!-- ══════════ MOBILE ══════════ -->
+<div class="mobile" id="mobileWrap">
   <div class="m-header">
     <div class="m-header-left">
-      <img src="logo.png" alt="Logo Cavok" style="width:38px;height:38px;border-radius:8px;object-fit:cover;border:1.5px solid #d4a800;">
-      <div><div class="m-title">Agenda Cavok ✈️</div><div class="m-subtitle" id="m-headerSub">Aulas de Inglês</div></div>
+      <img src="logo.png" alt="Cavok" style="width:38px;height:38px;border-radius:8px;object-fit:cover;border:1.5px solid #d4a800;">
+      <div><div class="m-title">Agenda Cavok ✈️</div><div class="m-sub" id="m-sub">Aulas de Inglês</div></div>
     </div>
     <div style="display:flex;gap:6px;align-items:center;">
-      <div class="sync-indicator"><div class="sync-dot" id="m-syncDot"></div><span id="m-syncLabel"></span></div>
+      <div class="sync-wrap"><div class="sync-dot" id="m-dot"></div><span id="m-sync"></span></div>
       <button class="btn btn-gold" style="padding:6px 10px;font-size:11px;" onclick="window.print()">🖨</button>
     </div>
   </div>
-  <div class="m-teacher-bar">
+  <div class="m-teacher">
     <label>Prof.:</label>
-    <input type="text" id="m-teacherName" placeholder="Seu nome..." oninput="saveTeacherName()" />
+    <input type="text" id="m-teacher" placeholder="Seu nome..." oninput="saveTeacher()">
   </div>
   <div class="m-month-nav">
     <button class="m-month-arrow" onclick="changeMonth(-1)">&#8592;</button>
-    <span class="m-month-label" id="m-monthLabel"></span>
+    <span class="m-month-label" id="m-month"></span>
     <button class="m-month-arrow" onclick="changeMonth(1)">&#8594;</button>
-    <button class="m-today-btn" onclick="goToday()">Hoje</button>
+    <button class="m-today-btn"   onclick="goToday()">Hoje</button>
   </div>
   <div class="m-cal-wrap">
     <div class="m-cal-wds">
       <div class="m-cal-wd">D</div><div class="m-cal-wd">S</div><div class="m-cal-wd">T</div>
       <div class="m-cal-wd">Q</div><div class="m-cal-wd">Q</div><div class="m-cal-wd">S</div><div class="m-cal-wd">S</div>
     </div>
-    <div class="m-cal-grid" id="m-calGrid"></div>
+    <div class="m-cal-grid" id="m-cal"></div>
   </div>
   <div class="m-legend">
     <span>Legenda:</span>
@@ -331,9 +351,10 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
     <div class="m-legend-item"><span class="pill inva">IN</span></div>
     <div class="m-legend-item"><span class="pill cms">CM</span></div>
     <div class="m-legend-item"><span style="width:10px;height:10px;background:#d4a800;border-radius:2px;display:inline-block;"></span> Voo</div>
+    <div class="m-legend-item">✅🔒🔄</div>
   </div>
-  <div id="m-dayBanner"></div>
-  <div class="m-slots-bg" id="m-slotsList"></div>
+  <div id="m-banner"></div>
+  <div class="m-slots-bg" id="m-slots"></div>
   <div class="m-footer">Agenda Cavok ✈️ · Sincronizado na nuvem ☁️</div>
 </div>
 
@@ -341,458 +362,327 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBne5908BluVdDB7q-3DW_72eNf-B7O3nk",
-  authDomain: "agenda-cavok.firebaseapp.com",
-  projectId: "agenda-cavok",
-  storageBucket: "agenda-cavok.firebasestorage.app",
-  messagingSenderId: "922283219152",
-  appId: "1:922283219152:web:e6c6ce31f1f0878064a6d5"
-};
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+const FB = { apiKey:"AIzaSyBne5908BluVdDB7q-3DW_72eNf-B7O3nk", authDomain:"agenda-cavok.firebaseapp.com", projectId:"agenda-cavok", storageBucket:"agenda-cavok.firebasestorage.app", messagingSenderId:"922283219152", appId:"1:922283219152:web:e6c6ce31f1f0878064a6d5" };
+const db = getFirestore(initializeApp(FB));
 
-const MONTHS_PT   = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const WEEKDAYS_PT = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-const SUFFIXES    = ['','‑feira','‑feira','‑feira','‑feira','‑feira',''];
+const MONTHS   = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const WEEKDAYS = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+const SUFFIXES = ['','‑feira','‑feira','‑feira','‑feira','‑feira',''];
 const SLOTS = ['06:00','06:30','07:00','07:30','08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30','21:00','21:30','22:00'];
+const AERO_BLOCKED = ['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30','23:00'];
 const TURMAS = ['pp','pc','inva','cms'];
-const TURMA_NAMES = { pp:'Piloto Privado', pc:'Piloto Comercial', inva:'INVA', cms:'CMS' };
-const TURMA_LABELS = { pp:'PP', pc:'PC', inva:'INVA', cms:'CMS' };
+const TURMA_LABELS = {pp:'PP',pc:'PC',inva:'INVA',cms:'CMS'};
+const TURMA_NAMES  = {pp:'Piloto Privado',pc:'Piloto Comercial',inva:'INVA',cms:'CMS'};
 
-const todayReal = new Date();
-let viewYear = todayReal.getFullYear(), viewMonth = todayReal.getMonth();
-let activeKey = dateKey(todayReal);
-let cache = {}, saveTimers = {};
+const TODAY = new Date();
+let viewYear = TODAY.getFullYear(), viewMonth = TODAY.getMonth();
+let activeKey = dk(TODAY);
+let cache = {}, timers = {};
 
-function dateKey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-function keyToDate(k){ const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d); }
-function todayKey(){ return dateKey(todayReal); }
+function dk(d){ return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`; }
+function p2(n){ return String(n).padStart(2,'0'); }
+function kd(k){ const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d); }
+function todayKey(){ return dk(TODAY); }
 function isMobile(){ return window.innerWidth<=600; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function emptyDay(){
   const slots={};
-  SLOTS.forEach(s=>slots[s]={student:'',obs:'',fixo:false,feito:false,remarcado:false});
-  const aeroclube={ativo:false, turmas:{}};
+  SLOTS.forEach(s=>slots[s]={student:'',fixo:false,feito:false,remarcado:false});
+  const aeroclube={ativo:false,turmas:{}};
   TURMAS.forEach(t=>aeroclube.turmas[t]={ativo:false,aluno:'',obs:''});
-  return {slots, notes:'', voo:false, aeroclube};
+  return {slots,notes:'',voo:false,aeroclube};
 }
 
-function setSyncStatus(s){
+function mergeDay(data){
+  const d=emptyDay();
+  d.voo=data.voo||false;
+  d.notes=data.notes||'';
+  if(data.slots) Object.keys(data.slots).forEach(s=>{
+    if(d.slots[s]) d.slots[s]={student:data.slots[s].student||'',fixo:!!data.slots[s].fixo,feito:!!data.slots[s].feito,remarcado:!!data.slots[s].remarcado};
+  });
+  if(data.aeroclube){
+    d.aeroclube.ativo=!!data.aeroclube.ativo;
+    if(data.aeroclube.turmas) TURMAS.forEach(t=>{ if(data.aeroclube.turmas[t]) d.aeroclube.turmas[t]={...d.aeroclube.turmas[t],...data.aeroclube.turmas[t]}; });
+  }
+  return d;
+}
+
+function sync(s){
   ['d-','m-'].forEach(p=>{
-    const dot=document.getElementById(p+'syncDot');
-    const lbl=document.getElementById(p+'syncLabel');
-    if(!dot)return;
+    const dot=document.getElementById(p+'dot'), lbl=document.getElementById(p+'sync');
+    if(!dot) return;
     dot.className='sync-dot '+s;
     lbl.textContent=s==='syncing'?'salvando...':s==='synced'?'salvo ✓':s==='error'?'erro':'';
   });
 }
 
-async function loadDay(key){
-  if(cache[key])return cache[key];
-  try{ const snap=await getDoc(doc(db,'agenda',key)); cache[key]=snap.exists()?mergeDay(snap.data()):emptyDay(); }
-  catch(e){ cache[key]=emptyDay(); }
-  return cache[key];
+async function loadDay(k){
+  if(cache[k]) return cache[k];
+  try{ const s=await getDoc(doc(db,'agenda',k)); cache[k]=s.exists()?mergeDay(s.data()):emptyDay(); }
+  catch(e){ cache[k]=emptyDay(); }
+  return cache[k];
 }
 
-function mergeDay(data){
-  const def=emptyDay();
-  def.voo=data.voo||false;
-  def.notes=data.notes||'';
-  if(data.slots) Object.keys(data.slots).forEach(s=>{ if(def.slots[s]) def.slots[s]={student:data.slots[s].student||'',obs:data.slots[s].obs||'',fixo:data.slots[s].fixo||false,feito:data.slots[s].feito||false,remarcado:data.slots[s].remarcado||false}; });
-  if(data.aeroclube){
-    def.aeroclube.ativo=data.aeroclube.ativo||false;
-    if(data.aeroclube.turmas) TURMAS.forEach(t=>{ if(data.aeroclube.turmas[t]) def.aeroclube.turmas[t]={...def.aeroclube.turmas[t],...data.aeroclube.turmas[t]}; });
-  }
-  return def;
-}
+async function saveDay(k){ sync('syncing'); try{ await setDoc(doc(db,'agenda',k),cache[k]); sync('synced'); }catch(e){ sync('error'); } }
+function schedule(k){ clearTimeout(timers[k]); timers[k]=setTimeout(()=>saveDay(k),800); }
 
-async function saveDay(key){ setSyncStatus('syncing'); try{ await setDoc(doc(db,'agenda',key),cache[key]); setSyncStatus('synced'); }catch(e){ setSyncStatus('error'); } }
-function scheduleSave(key){ clearTimeout(saveTimers[key]); saveTimers[key]=setTimeout(()=>saveDay(key),800); }
-
-async function saveTeacherName(){
-  const n=document.getElementById(isMobile()?'m-teacherName':'d-teacherName').value;
-  document.getElementById('d-teacherName').value=n;
-  document.getElementById('m-teacherName').value=n;
+async function saveTeacher(){
+  const n=document.getElementById(isMobile()?'m-teacher':'d-teacher').value;
+  document.getElementById('d-teacher').value=n;
+  document.getElementById('m-teacher').value=n;
   try{ await setDoc(doc(db,'config','professor'),{name:n}); }catch(e){}
 }
-async function loadTeacherName(){
-  try{ const snap=await getDoc(doc(db,'config','professor')); if(snap.exists()){ const n=snap.data().name||''; document.getElementById('d-teacherName').value=n; document.getElementById('m-teacherName').value=n; } }catch(e){}
+async function loadTeacher(){
+  try{ const s=await getDoc(doc(db,'config','professor')); if(s.exists()){ const n=s.data().name||''; document.getElementById('d-teacher').value=n; document.getElementById('m-teacher').value=n; } }catch(e){}
 }
 
-function hasAulas(key){ if(!cache[key])return false; return Object.values(cache[key].slots).some(v=>v.student&&v.student.trim()!==''); }
-function countAulas(key){ if(!cache[key])return 0; return Object.values(cache[key].slots).filter(v=>v.student&&v.student.trim()!=='').length; }
-function activeTurmas(key){ if(!cache[key]||!cache[key].aeroclube||!cache[key].aeroclube.ativo)return []; return TURMAS.filter(t=>cache[key].aeroclube.turmas[t].ativo); }
-function isVoo(key){ return cache[key]&&cache[key].voo===true; }
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function hasAulas(k){ return cache[k]&&Object.values(cache[k].slots).some(v=>v.student&&v.student.trim()!==''); }
+function countAulas(k){ return cache[k]?Object.values(cache[k].slots).filter(v=>v.student&&v.student.trim()!=='').length:0; }
+function activeTurmas(k){ return cache[k]&&cache[k].aeroclube&&cache[k].aeroclube.ativo?TURMAS.filter(t=>cache[k].aeroclube.turmas[t].ativo):[]; }
+function isVoo(k){ return !!(cache[k]&&cache[k].voo); }
 
+function pillsHTML(k,active){
+  const turmas=activeTurmas(k);
+  const dot=hasAulas(k);
+  let h='';
+  if(dot) h+=`<span class="cal-dot${isVoo(k)&&!active?' on-voo':''}${active?' active-day':''}"></span>`;
+  turmas.forEach(t=>h+=`<span class="pill ${t}${active?' on-active':''}">${TURMA_LABELS[t]}</span>`);
+  return h;
+}
 
-window.goToday=function(){ viewYear=todayReal.getFullYear(); viewMonth=todayReal.getMonth(); selectDay(todayKey()); };
+window.changeMonth=async function(dir){
+  viewMonth+=dir;
+  if(viewMonth>11){viewMonth=0;viewYear++;}
+  if(viewMonth<0){viewMonth=11;viewYear--;}
+  renderCal();
+  await preload(viewYear,viewMonth);
+};
+window.goToday=function(){ viewYear=TODAY.getFullYear(); viewMonth=TODAY.getMonth(); selectDay(todayKey()); };
 window.selectDay=selectDay;
+window.saveTeacher=saveTeacher;
 
-async function selectDay(key){ activeKey=key; const d=keyToDate(key); viewYear=d.getFullYear(); viewMonth=d.getMonth(); renderCalendar(); await renderSchedule(); }
-
-function pillsHTML(key, forActive){
-  const turmas=activeTurmas(key);
-  const dot=hasAulas(key);
-  let html='';
-  if(dot) html+=`<span class="cal-dot${forActive?' active-day':isVoo(key)?' on-voo':''}"></span>`;
-  turmas.forEach(t=>html+=`<span class="pill ${t}${forActive?' on-active':''}">${TURMA_LABELS[t]}</span>`);
-  return html;
+async function preload(y,m){
+  const days=new Date(y,m+1,0).getDate();
+  const jobs=[];
+  for(let d=1;d<=days;d++){
+    const k=`${y}-${p2(m+1)}-${p2(d)}`;
+    if(!cache[k]) jobs.push(loadDay(k));
+  }
+  await Promise.all(jobs);
+  renderCal();
 }
 
-function renderCalendar(){
-  const label=`${MONTHS_PT[viewMonth]} ${viewYear}`;
-  document.getElementById('d-monthLabel').textContent=label;
-  document.getElementById('m-monthLabel').textContent=label;
-  const firstDay=new Date(viewYear,viewMonth,1).getDay();
-  const daysInMonth=new Date(viewYear,viewMonth+1,0).getDate();
+async function selectDay(k){
+  activeKey=k;
+  const d=kd(k);
+  viewYear=d.getFullYear(); viewMonth=d.getMonth();
+  renderCal();
+  await renderSchedule();
+}
+
+function renderCal(){
+  const label=`${MONTHS[viewMonth]} ${viewYear}`;
+  document.getElementById('d-month').textContent=label;
+  document.getElementById('m-month').textContent=label;
+  const first=new Date(viewYear,viewMonth,1).getDay();
+  const days=new Date(viewYear,viewMonth+1,0).getDate();
   const todK=todayKey();
   let dC='',mC='';
-  for(let i=0;i<firstDay;i++){ dC+=`<div class="cal-day empty"></div>`; mC+=`<div class="m-cal-day empty"></div>`; }
-  for(let d=1;d<=daysInMonth;d++){
-    const k=`${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  for(let i=0;i<first;i++){ dC+=`<div class="cal-day empty"></div>`; mC+=`<div class="m-cal-day empty"></div>`; }
+  for(let d=1;d<=days;d++){
+    const k=`${viewYear}-${p2(viewMonth+1)}-${p2(d)}`;
     const dt=new Date(viewYear,viewMonth,d);
     const wd=dt.getDay();
-    const isA=k===activeKey, isT=k===todK, isV=isVoo(k);
+    const isA=k===activeKey,isT=k===todK,isV=isVoo(k);
     let dc='cal-day'; if(isA)dc+=' active'; if(isT)dc+=' today-mark'; if(isV)dc+=' voo';
     let mc='m-cal-day'; if(isA)mc+=' active'; if(isT)mc+=' today-mark'; if(isV)mc+=' voo';
     const ind=pillsHTML(k,isA);
-    dC+=`<div class="${dc}" onclick="selectDay('${k}')"><span class="cal-num">${d}</span><span class="cal-wkd">${WEEKDAYS_PT[wd].slice(0,3)}</span><div class="cal-indicators">${ind}</div></div>`;
-    mC+=`<div class="${mc}" onclick="selectDay('${k}')"><span class="m-cal-num">${d}</span><span class="m-cal-wkd">${WEEKDAYS_PT[wd].slice(0,1)}</span><div class="cal-indicators" style="transform:scale(0.85)">${ind}</div></div>`;
+    dC+=`<div class="${dc}" onclick="selectDay('${k}')"><span class="cal-num">${d}</span><span class="cal-wkd">${WEEKDAYS[wd].slice(0,3)}</span><div class="cal-indicators">${ind}</div></div>`;
+    mC+=`<div class="${mc}" onclick="selectDay('${k}')"><span class="m-cal-num">${d}</span><span class="m-cal-wkd">${WEEKDAYS[wd].slice(0,1)}</span><div class="cal-indicators" style="transform:scale(.85)">${ind}</div></div>`;
   }
-  document.getElementById('d-calGrid').innerHTML=dC;
-  document.getElementById('m-calGrid').innerHTML=mC;
+  document.getElementById('d-cal').innerHTML=dC;
+  document.getElementById('m-cal').innerHTML=mC;
 }
 
-const AERO_BLOCKED=['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30','23:00'];
-
-function botoesTopHTML(key, pad){
-  const v=isVoo(key);
-  const aero=cache[key]&&cache[key].aeroclube;
-  const aeroAtivo=aero&&aero.ativo;
-  return `<div style="background:#fffef5;border-bottom:1px solid #f0e8c0;padding:10px ${pad};display:flex;flex-direction:column;gap:8px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;background:${v?'#d4a800':'#f5f0e0'};border:1.5px solid ${v?'#b38a00':'#d4c070'};border-radius:10px;padding:10px 14px;">
-      <span style="font-size:13px;font-weight:600;color:${v?'#1a3a6b':'#7a6820'};">✈️ ${v?'Dia de voo ativo':'Marcar como dia de voo'}</span>
-      <button class="voo-toggle-btn${v?' ativo':''}" onclick="toggleVoo('${key}')" style="min-width:80px;">${v?'✓ Ativo':'Ativar'}</button>
-    </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;background:${aeroAtivo?'#1a3a6b':'#f5f0e0'};border:1.5px solid ${aeroAtivo?'#0d2347':'#d4c070'};border-radius:10px;padding:10px 14px;">
-      <span style="font-size:13px;font-weight:600;color:${aeroAtivo?'#f0c040':'#7a6820'};">🛩️ ${aeroAtivo?'Aeroclube ativado':'Aula no Aeroclube'}</span>
-      <button class="aero-toggle-btn${aeroAtivo?'':' off'}" onclick="toggleAero('${key}')" style="min-width:80px;">${aeroAtivo?'✓ Ativo':'Ativar'}</button>
-    </div>
-  </div>`;
+function countCard(k,dayName,suffix,dateStr){
+  const n=countAulas(k);
+  const emoji=n===0?'📭':n>=8?'🏆':n>=5?'🔥':'📚';
+  const msg=n===0?'Nenhuma aula agendada':n===1?'1 aula agendada':n+' aulas agendadas';
+  return `<div class="count-card"><div class="count-num">${n}</div><div><div class="count-label">${emoji} ${msg}</div><div class="count-sub">📅 ${dayName}${suffix} · ${dateStr}</div></div></div>`;
 }
 
-function aeroSecaoHTML(key, mobile){
-  const d=cache[key]; const aero=d.aeroclube;
-  const pad=mobile?'12px':'16px';
-  if(!aero.ativo) return '';
-
-  const turmaCards=TURMAS.map(t=>{
-    const tr=aero.turmas[t];
-    const isAtivo=tr.ativo;
-    return `<div class="turma-card ${t}${isAtivo?' ativo':''}" onclick="toggleTurma('${key}','${t}')" style="cursor:pointer;">
-      <div class="turma-header">
-        <span class="turma-pill-lg">${TURMA_LABELS[t]}</span>
-        <span class="turma-nome">${TURMA_NAMES[t]}</span>
-      </div>
-      <div class="turma-body" onclick="event.stopPropagation()">
-        <input class="turma-input${tr.aluno?' filled':''}" placeholder="Nome do aluno..."
-          value="${esc(tr.aluno)}"
-          data-key="${key}" data-turma="${t}" data-field="aluno"
-          oninput="updateTurma(this)" />
-        <input class="turma-input" placeholder="Observações..."
-          value="${esc(tr.obs)}"
-          data-key="${key}" data-turma="${t}" data-field="obs"
-          oninput="updateTurma(this)" />
-      </div>
-    </div>`;
-  }).join('');
-
-  return `
-    <div class="aero-section">
-      <div class="aero-horario-bar" style="padding:8px ${pad};">
-        <span class="aero-horario-badge">19:00 → 22:40</span>
-        <span style="font-size:12px;color:#1a3a6b;font-weight:500;">horário fixo · 19:00–23:00 bloqueados</span>
-      </div>
-      <div class="aero-turmas-label" style="padding:10px ${pad} 6px;">Toque nas turmas para ativar/desativar:</div>
-      <div class="turmas-grid" style="padding:0 ${pad} ${pad};">${turmaCards}</div>
-    </div>`;
-}
-
-function countCard(key, dayName, suffix, dateStr){
-  const count=countAulas(key);
-  const msg = count===0?'Nenhuma aula agendada':count===1?'1 aula agendada hoje':count+' aulas agendadas hoje';
-  const emoji = count===0?'📭':count>=8?'🏆':count>=5?'🔥':'📚';
-  return `<div class="count-card">
-    <div class="count-num">${count}</div>
-    <div>
-      <div class="count-label">${emoji} ${msg}</div>
-      <div class="count-sub">📅 ${dayName}${suffix} · ${dateStr}</div>
-    </div>
-  </div>`;
-}
-
-function resumoHTML(key){
-  if(!cache[key]) return '';
-  const aulas=SLOTS.filter(s=>cache[key].slots[s]&&cache[key].slots[s].student&&cache[key].slots[s].student.trim()!=='');
-  if(aulas.length===0) return `<div class="resumo-section"><div class="resumo-title">📋 Resumo do dia</div><div class="resumo-empty">Nenhum aluno agendado ainda</div></div>`;
+function resumoHTML(k){
+  if(!cache[k]) return '';
+  const aulas=SLOTS.filter(s=>cache[k].slots[s]&&cache[k].slots[s].student&&cache[k].slots[s].student.trim()!=='');
+  if(!aulas.length) return `<div class="resumo-section"><div class="resumo-title">📋 Resumo do dia</div><div class="resumo-empty">Nenhum aluno agendado ainda</div></div>`;
   const cards=aulas.map(s=>{
-    const v=cache[key].slots[s];
-    const fixo=v.fixo?'<span class="resumo-fixo-badge">🔒 FIXO</span>':'';
-    return `<div class="resumo-card${v.fixo?' fixo':''}" onclick="document.querySelector('[data-scroll=\'${s}\']') && document.querySelector('[data-scroll=\'${s}\']').scrollIntoView({behavior:'smooth',block:'center'})">
-      <span class="resumo-time">${s}</span>
-      <span class="resumo-name">${esc(v.student)}</span>
-      ${fixo}
+    const v=cache[k].slots[s];
+    return `<div class="resumo-card${v.fixo?' fixo':''}" onclick="(function(){var el=document.getElementById('slot-${s}');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});})()">
+      <span class="resumo-time">${s}</span><span class="resumo-name">${esc(v.student)}</span>${v.fixo?'<span class="resumo-fixo-badge">🔒</span>':''}
     </div>`;
   }).join('');
-  return `<div class="resumo-section"><div class="resumo-title">📋 Horários marcados — clique para ir ao horário</div><div class="resumo-grid">${cards}</div></div>`;
+  return `<div class="resumo-section"><div class="resumo-title">📋 Horários marcados — clique para navegar</div><div class="resumo-grid">${cards}</div></div>`;
+}
+
+function bannersHTML(k,pad){
+  const vOn=isVoo(k), aOn=cache[k]&&cache[k].aeroclube&&cache[k].aeroclube.ativo;
+  return `<div class="banner-row" style="padding:10px ${pad};gap:8px;">
+    <div class="banner-item${vOn?' voo-on':''}">
+      <span class="banner-label">✈️ ${vOn?'Dia de voo ativo':'Marcar como dia de voo'}</span>
+      <button class="toggle-btn ${vOn?'voo-on':'off'}" onclick="toggleVoo('${k}')">${vOn?'✓ Ativo':'Ativar'}</button>
+    </div>
+    <div class="banner-item${aOn?' aero-on':''}">
+      <span class="banner-label">🛩️ ${aOn?'Aeroclube ativado':'Aula no Aeroclube'}</span>
+      <button class="toggle-btn ${aOn?'aero-on':'off'}" onclick="toggleAero('${k}')">${aOn?'✓ Ativo':'Ativar'}</button>
+    </div>
+  </div>`;
+}
+
+function aeroHTML(k,pad){
+  if(!cache[k]||!cache[k].aeroclube||!cache[k].aeroclube.ativo) return '';
+  const cards=TURMAS.map(t=>{
+    const tr=cache[k].aeroclube.turmas[t];
+    return `<div class="turma-card ${t}${tr.ativo?' on':''}" onclick="toggleTurma('${k}','${t}')">
+      <div class="turma-header"><span class="turma-pill">${TURMA_LABELS[t]}</span><span class="turma-nome">${TURMA_NAMES[t]}</span></div>
+      <div class="turma-body" onclick="event.stopPropagation()">
+        <input class="turma-input${tr.aluno?' filled':''}" placeholder="Nome do aluno..." value="${esc(tr.aluno)}" data-key="${k}" data-turma="${t}" data-field="aluno" oninput="updateTurma(this)">
+        <input class="turma-input" placeholder="Observações..." value="${esc(tr.obs)}" data-key="${k}" data-turma="${t}" data-field="obs" oninput="updateTurma(this)">
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="aero-section">
+    <div class="aero-block-bar" style="padding:8px ${pad};">
+      <span class="aero-block-badge">🛩️ 19:00 → 23:00</span>
+      <div><div class="aero-block-text">Agenda bloqueada — Aeroclube</div><div class="aero-block-sub">Horários indisponíveis para aulas regulares</div></div>
+    </div>
+    <div class="aero-turmas-label" style="padding:10px ${pad} 6px;">Toque nas turmas para ativar/desativar:</div>
+    <div class="turmas-grid" style="padding:0 ${pad} ${pad};">${cards}</div>
+  </div>`;
 }
 
 async function renderSchedule(){
-  const dayData=await loadDay(activeKey);
-  const dt=keyToDate(activeKey);
-  const wd=dt.getDay();
-  const dayName=WEEKDAYS_PT[wd], suffix=SUFFIXES[wd];
-  const dateStr=`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
-  const count=countAulas(activeKey);
-  document.getElementById('d-headerSub').textContent=`${dateStr} — Aulas de Inglês`;
-  document.getElementById('m-headerSub').textContent=dateStr;
+  const data=await loadDay(activeKey);
+  const dt=kd(activeKey), wd=dt.getDay();
+  const dayName=WEEKDAYS[wd], suffix=SUFFIXES[wd];
+  const dateStr=`${p2(dt.getDate())}/${p2(dt.getMonth()+1)}/${dt.getFullYear()}`;
+  const aeroOn=data.aeroclube&&data.aeroclube.ativo;
 
-  // DESKTOP
-  const aeroAtivo=dayData.aeroclube&&dayData.aeroclube.ativo;
-  let dRows='';
-  let aeroInserted=false;
+  document.getElementById('d-sub').textContent=`${dateStr} — Aulas de Inglês`;
+  document.getElementById('m-sub').textContent=dateStr;
+
+  // ── DESKTOP ROWS ──
+  let rows='', aeroInserted=false;
   SLOTS.forEach(slot=>{
-    const blocked=aeroAtivo&&AERO_BLOCKED.includes(slot);
-    if(blocked){
+    if(aeroOn&&AERO_BLOCKED.includes(slot)){
       if(!aeroInserted){
         aeroInserted=true;
-        dRows+=`<tr><td colspan="3" style="padding:0;">
-          <div style="display:flex;align-items:center;justify-content:space-between;background:#fff8e0;border-top:2px solid #d4a800;border-bottom:2px solid #d4a800;padding:12px 16px;">
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span style="background:#d4a800;color:#1a3a6b;font-size:12px;font-weight:700;padding:4px 12px;border-radius:10px;">🛩️ 19:00 → 23:00</span>
-              <div>
-                <div style="font-size:13px;font-weight:600;color:#7a5f00;">Agenda bloqueada — Aeroclube</div>
-                <div style="font-size:11px;color:#b38a00;">Horários indisponíveis para aulas regulares</div>
-              </div>
-            </div>
-          </div>
-          <div style="background:#f0f4ff;padding:14px 16px;">
-            <div style="font-size:11px;font-weight:700;color:#3a4a7a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">✈️ Turmas do Aeroclube — clique para ativar/desativar</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              ${TURMAS.map(t=>{
-                const tr=dayData.aeroclube.turmas[t];
-                const isAtivo=tr.ativo;
-                return `<div class="turma-card ${t}${isAtivo?' ativo':''}" onclick="toggleTurma('${activeKey}','${t}')" style="cursor:pointer;">
-                  <div class="turma-header"><span class="turma-pill-lg">${TURMA_LABELS[t]}</span><span class="turma-nome">${TURMA_NAMES[t]}</span></div>
-                  <div class="turma-body" onclick="event.stopPropagation()">
-                    <input class="turma-input${tr.aluno?' filled':''}" placeholder="Nome do aluno..." value="${esc(tr.aluno)}" data-key="${activeKey}" data-turma="${t}" data-field="aluno" oninput="updateTurma(this)" />
-                    <input class="turma-input" placeholder="Observações..." value="${esc(tr.obs)}" data-key="${activeKey}" data-turma="${t}" data-field="obs" oninput="updateTurma(this)" />
-                  </div>
-                </div>`;
-              }).join('')}
-            </div>
-          </div>
-        </td></tr>`;
+        rows+=`<tr><td colspan="3" style="padding:0;">${aeroHTML(activeKey,'16px')}</td></tr>`;
       }
       return;
     }
-    const val=dayData.slots[slot]||{student:'',obs:''};
-    const filled=val.student&&val.student.trim()!==''?' filled':'';
-    const isFixo=val.fixo||false;
-    dRows+=`<tr style="border-bottom:1px solid #f0e8c0;${isFixo?'background:#f5faff;':''}" id="slot-${slot}">
-      <td style="padding:6px 8px;text-align:center;"><span class="time-badge">${slot}</span></td>
-      <td style="padding:5px 8px;">
-        <input type="text" class="student-input${filled}" placeholder="Nome do aluno..."
-          value="${esc(val.student)}"
-          data-key="${activeKey}" data-slot="${slot}" data-field="student"
-          oninput="updateField(this)" style="width:100%;"
-          ${isFixo?'disabled':''} />
+    const v=data.slots[slot]||{student:'',fixo:false,feito:false,remarcado:false};
+    const filled=v.student&&v.student.trim()!==''?' filled':'';
+    let rowCls='', inputCls=`aluno-input${filled}`, inputExtra='';
+    if(v.feito)     { rowCls='row-feito';     inputExtra='background:#f0fff4;border-color:#a0dbb0;'; }
+    else if(v.remarcado){ rowCls='row-remarcado'; inputCls+=` inp-remarcado`; }
+    else if(v.fixo) { rowCls='row-fixo'; }
+    rows+=`<tr id="slot-${slot}" style="border-bottom:1px solid #f0e8c0;">
+      <td style="padding:5px 8px;text-align:center;width:72px;"><span class="time-badge">${slot}</span></td>
+      <td style="padding:4px 8px;">
+        <input type="text" class="${inputCls}" style="width:100%;${inputExtra}" placeholder="Nome do aluno..."
+          value="${esc(v.student)}" data-key="${activeKey}" data-slot="${slot}" data-field="student"
+          oninput="updateField(this)" ${v.fixo||v.feito?'disabled':''}>
       </td>
-      <td style="padding:5px 8px;">
-        <textarea class="obs-input" placeholder="Obs..." data-key="${activeKey}" data-slot="${slot}" data-field="obs" oninput="updateField(this)" ${isFixo?'disabled':''}>${esc(val.obs)}</textarea>
-      </td>
-      <td style="padding:5px 8px;width:64px;">
-        <button class="fixo-btn${isFixo?' ativo':''}" onclick="toggleFixo('${activeKey}','${slot}')" title="${isFixo?'Clique para desbloquear':'Marcar como fixo'}">
-          ${isFixo?'🔒 FIXO':'📌 fixo'}
-        </button>
+      <td style="padding:4px 8px;width:120px;">
+        <div class="emoji-btns" style="justify-content:flex-end;">
+          <button class="ebtn feito-btn${v.feito?' on':''}"     onclick="toggleFeito('${activeKey}','${slot}')"     title="Aula feita">✅</button>
+          <button class="ebtn fixo-btn${v.fixo?' on':''}"       onclick="toggleFixo('${activeKey}','${slot}')"      title="Fixo">🔒</button>
+          <button class="ebtn remark-btn${v.remarcado?' on':''}" onclick="toggleRemarcado('${activeKey}','${slot}')" title="Remarcado">🔄</button>
+        </div>
       </td>
     </tr>`;
   });
 
-  document.getElementById('d-mainContent').innerHTML=`
+  document.getElementById('d-main').innerHTML=`
     ${resumoHTML(activeKey)}
     ${countCard(activeKey,dayName,suffix,dateStr)}
     <div class="d-day-header" style="margin-top:12px;">
       <div class="d-day-title">📅 ${dayName}${suffix} — ${dateStr}</div>
     </div>
-    ${botoesTopHTML(activeKey,'28px')}
+    ${bannersHTML(activeKey,'28px')}
     <div class="section-lbl" style="padding:10px 28px 6px;">🏫 Aulas regulares</div>
-    <div class="d-slots-wrap">
-      <table style="width:100%;border-collapse:collapse;">
-        <thead><tr style="background:#1a3a6b;">
-          <th style="color:#f0c040;font-size:11px;padding:8px;width:70px;text-align:center;border-radius:8px 0 0 0;">Hora</th>
-          <th style="color:#f0c040;font-size:11px;padding:8px;text-align:left;">Aluno</th>
-          <th style="color:#f0c040;font-size:14px;padding:8px;text-align:right;border-radius:0 8px 0 0;width:128px;">✅ 🔒 🔄</th>
-        </tr></thead>
-        <tbody>${dRows}</tbody>
-      </table>
-    </div>
-    <div style="padding:0 16px;">
-      <div class="day-notes-wrap" style="margin:16px 12px 0;">
-        <label>📝 Notas gerais do dia</label>
-        <textarea placeholder="Anotações, lembretes..." oninput="updateDayNotes(this)">${esc(dayData.notes||'')}</textarea>
-      </div>
+    <table class="d-table" style="margin:0 12px;width:calc(100% - 24px);">
+      <thead><tr>
+        <th style="text-align:center;">Hora</th>
+        <th>Aluno</th>
+        <th style="text-align:right;">✅ 🔒 🔄</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="notas-wrap" style="margin:16px 16px 16px;">
+      <label>📝 Notas gerais do dia</label>
+      <textarea placeholder="Anotações, lembretes..." oninput="updateNotes(this)">${esc(data.notes||'')}</textarea>
     </div>`;
 
-  // MOBILE banner
-  document.getElementById('m-dayBanner').innerHTML=`
+  // ── MOBILE ──
+  document.getElementById('m-banner').innerHTML=`
     <div class="m-day-banner">
-      <div>
-        <div class="m-day-name">📅 ${dayName}${suffix}</div>
-        <div class="m-day-info">${dateStr} · ${count>0?count+' aula(s)':'sem aulas'}</div>
-      </div>
-      <button class="m-clear-btn" onclick="clearDay()">🗑</button>
+      <div><div class="m-day-name">📅 ${dayName}${suffix}</div><div class="m-day-info">${dateStr} · ${countAulas(activeKey)} aula(s)</div></div>
+      <button class="btn btn-danger" style="padding:5px 10px;font-size:11px;" onclick="clearDay()">🗑</button>
     </div>`;
 
-  // MOBILE slots
-  let mCards='';
-  let mAeroInserted=false;
+  let mCards='', mAeroInserted=false;
   SLOTS.forEach(slot=>{
-    const blocked=aeroAtivo&&AERO_BLOCKED.includes(slot);
-    if(blocked){
-      if(!mAeroInserted){
-        mAeroInserted=true;
-        mCards+=`<div style="background:#fff8e0;border-top:2px solid #d4a800;border-bottom:2px solid #d4a800;padding:12px;margin-bottom:8px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-            <span style="background:#d4a800;color:#1a3a6b;font-size:11px;font-weight:700;padding:3px 10px;border-radius:8px;">🛩️ 19:00 → 23:00</span>
-            <div>
-              <div style="font-size:12px;font-weight:600;color:#7a5f00;">Agenda bloqueada</div>
-              <div style="font-size:10px;color:#b38a00;">Aeroclube — aulas indisponíveis</div>
-            </div>
-          </div>
-          <div style="background:#f0f4ff;border-radius:8px;padding:10px;">
-            <div style="font-size:10px;font-weight:700;color:#3a4a7a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">✈️ Turmas — toque para ativar</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-              ${TURMAS.map(t=>{
-                const tr=dayData.aeroclube.turmas[t];
-                const isAtivo=tr.ativo;
-                return `<div class="turma-card ${t}${isAtivo?' ativo':''}" onclick="toggleTurma('${activeKey}','${t}')" style="cursor:pointer;">
-                  <div class="turma-header" style="padding:6px 8px;"><span class="turma-pill-lg">${TURMA_LABELS[t]}</span><span class="turma-nome" style="font-size:10px;">${TURMA_NAMES[t]}</span></div>
-                  <div class="turma-body" style="padding:6px 8px;" onclick="event.stopPropagation()">
-                    <input class="turma-input${tr.aluno?' filled':''}" placeholder="Aluno..." value="${esc(tr.aluno)}" data-key="${activeKey}" data-turma="${t}" data-field="aluno" oninput="updateTurma(this)" style="font-size:12px;" />
-                    <input class="turma-input" placeholder="Obs..." value="${esc(tr.obs)}" data-key="${activeKey}" data-turma="${t}" data-field="obs" oninput="updateTurma(this)" style="font-size:11px;" />
-                  </div>
-                </div>`;
-              }).join('')}
-            </div>
-          </div>
-        </div>`;
-      }
+    if(aeroOn&&AERO_BLOCKED.includes(slot)){
+      if(!mAeroInserted){ mAeroInserted=true; mCards+=`<div style="margin-bottom:8px;">${aeroHTML(activeKey,'12px')}</div>`; }
       return;
     }
-    const val=dayData.slots[slot]||{student:'',obs:''};
-    const filled=val.student&&val.student.trim()!==''?' filled':'';
-    const booked=val.student&&val.student.trim()!==''?'<span class="m-slot-booked">✓</span>':'';
-    const isFixo=val.fixo||false;
-    mCards+=`<div class="m-slot-card" id="slot-${slot}" style="${isFixo?'opacity:0.9;':''}">
-      <div class="m-slot-header" style="${isFixo?'background:#0d2347;':''}">
-        <span class="m-slot-time-badge">${slot}</span>
-        ${isFixo?'<span style="font-size:10px;color:#f0c040;">🔒 FIXO</span>':booked}
-        <button class="fixo-btn${isFixo?' ativo':''}" onclick="toggleFixo('${activeKey}','${slot}')" style="margin-left:auto;height:24px;font-size:9px;width:48px;">
-          ${isFixo?'🔒':'📌'}
-        </button>
+    const v=data.slots[slot]||{student:'',fixo:false,feito:false,remarcado:false};
+    const filled=v.student&&v.student.trim()!==''?' filled':'';
+    let hdrBg='', inputCls=`m-aluno-input${filled}`;
+    if(v.feito)     { hdrBg='background:#3a9060;'; }
+    else if(v.remarcado){ hdrBg='background:#c07020;'; inputCls+=` inp-remarcado`; }
+    else if(v.fixo) { hdrBg='background:#0d2347;'; }
+    const statusLabel=v.feito?'✅ Feita':v.remarcado?'🔄 Remarcado':v.fixo?'🔒 FIXO':'';
+    const booked=v.student&&v.student.trim()!==''&&!v.feito&&!v.remarcado&&!v.fixo?'<span style="font-size:10px;color:#80e0a0;">✓</span>':'';
+    mCards+=`<div class="m-slot-card" id="slot-${slot}">
+      <div class="m-slot-header" style="${hdrBg}">
+        <span class="m-slot-time">${slot}</span>
+        ${statusLabel?`<span style="font-size:10px;color:white;font-weight:600;">${statusLabel}</span>`:booked}
+        <div style="margin-left:auto;display:flex;gap:3px;">
+          <button class="ebtn feito-btn${v.feito?' on':''}"     onclick="toggleFeito('${activeKey}','${slot}')"     style="width:32px;height:28px;font-size:15px;">✅</button>
+          <button class="ebtn fixo-btn${v.fixo?' on':''}"       onclick="toggleFixo('${activeKey}','${slot}')"      style="width:32px;height:28px;font-size:15px;">🔒</button>
+          <button class="ebtn remark-btn${v.remarcado?' on':''}" onclick="toggleRemarcado('${activeKey}','${slot}')" style="width:32px;height:28px;font-size:15px;">🔄</button>
+        </div>
       </div>
       <div class="m-slot-body">
-        <input type="text" class="m-student-input${filled}" placeholder="Nome do aluno..."
-          value="${esc(val.student)}"
-          data-key="${activeKey}" data-slot="${slot}" data-field="student"
-          oninput="updateField(this)" ${isFixo?'disabled':''} />
-        <textarea class="m-obs-input" placeholder="Obs..." data-key="${activeKey}" data-slot="${slot}" data-field="obs" oninput="updateField(this)" ${isFixo?'disabled':''}>${esc(val.obs)}</textarea>
+        <input type="text" class="${inputCls}" placeholder="Nome do aluno..."
+          value="${esc(v.student)}" data-key="${activeKey}" data-slot="${slot}" data-field="student"
+          oninput="updateField(this)" ${v.fixo||v.feito?'disabled':''}>
       </div>
     </div>`;
   });
 
-  document.getElementById('m-slotsList').innerHTML=`
+  document.getElementById('m-slots').innerHTML=`
     ${resumoHTML(activeKey)}
-    <div style="padding:0 12px;margin:10px 0 4px;">${countCard(activeKey,dayName,suffix,dateStr)}</div>
-    ${botoesTopHTML(activeKey,'12px')}
-    <div style="height:6px;"></div>
-    <div class="section-lbl" style="padding:8px 12px;margin:0 0 6px;">🏫 Aulas regulares</div>
+    <div style="margin:0 0 8px;">${countCard(activeKey,dayName,suffix,dateStr)}</div>
+    ${bannersHTML(activeKey,'12px')}
+    <div class="section-lbl" style="padding:8px 12px;margin:6px 0;">🏫 Aulas regulares</div>
     ${mCards}
-    <div class="day-notes-wrap" style="margin:10px 0 0;">
+    <div class="notas-wrap" style="margin:8px 0 0;">
       <label>📝 Notas do dia</label>
-      <textarea placeholder="Anotações, lembretes..." oninput="updateDayNotes(this)">${esc(dayData.notes||'')}</textarea>
+      <textarea placeholder="Anotações, lembretes..." oninput="updateNotes(this)">${esc(data.notes||'')}</textarea>
     </div>`;
 }
 
-window.toggleFixo=async function(key,slot){
-  if(!cache[key])cache[key]=emptyDay();
-  const nowFixo=!cache[key].slots[slot].fixo;
-  cache[key].slots[slot].fixo=nowFixo;
-  const student=cache[key].slots[slot].student;
-  const obs=cache[key].slots[slot].obs;
-
-  // Get day of week and build list of same weekday for current + next month
-  const dt=keyToDate(key);
-  const futureDays=[];
-
-  // Current month remaining + full next month = ~8 weeks max
-  for(let w=1;w<=8;w++){
-    const future=new Date(dt);
-    future.setDate(dt.getDate()+(w*7));
-    // Only include current month and next month
-    const sameMonth=future.getMonth()===dt.getMonth()&&future.getFullYear()===dt.getFullYear();
-    const nextMonth=future.getMonth()===(dt.getMonth()+1)%12&&
-      (dt.getMonth()===11?future.getFullYear()===dt.getFullYear()+1:future.getFullYear()===dt.getFullYear());
-    if(sameMonth||nextMonth) futureDays.push(dateKey(future));
-  }
-
-  const saves=[];
-  for(const fKey of futureDays){
-    if(!cache[fKey]) await loadDay(fKey);
-    if(nowFixo){
-      cache[fKey].slots[slot].fixo=true;
-      cache[fKey].slots[slot].student=student;
-      cache[fKey].slots[slot].obs=obs;
-    } else {
-      if(cache[fKey].slots[slot].fixo){
-        cache[fKey].slots[slot].fixo=false;
-      }
-    }
-    saves.push(saveDay(fKey));
-  }
-  scheduleSave(key);
-  await Promise.all(saves);
-  setSyncStatus('synced');
-  renderCalendar();
-  await renderSchedule();
-};
-
-window.toggleFeito=async function(key,slot){
-  if(!cache[key])cache[key]=emptyDay();
-  cache[key].slots[slot].feito=!cache[key].slots[slot].feito;
-  if(cache[key].slots[slot].feito) cache[key].slots[slot].remarcado=false;
-  scheduleSave(key);
-  await renderSchedule();
-};
-
-window.toggleRemarcado=async function(key,slot){
-  if(!cache[key])cache[key]=emptyDay();
-  cache[key].slots[slot].remarcado=!cache[key].slots[slot].remarcado;
-  if(cache[key].slots[slot].remarcado) cache[key].slots[slot].feito=false;
-  scheduleSave(key);
-  await renderSchedule();
-};
-
+// ── ACTIONS ──
 window.updateField=function(el){
   const {key,slot,field}=el.dataset;
   if(!cache[key])cache[key]=emptyDay();
   cache[key].slots[slot][field]=el.value;
   if(field==='student') el.classList.toggle('filled',el.value.trim()!=='');
-  scheduleSave(key);
-  renderCalendar();
+  schedule(key); renderCal();
 };
 
 window.updateTurma=function(el){
@@ -800,78 +690,82 @@ window.updateTurma=function(el){
   if(!cache[key])cache[key]=emptyDay();
   cache[key].aeroclube.turmas[turma][field]=el.value;
   if(field==='aluno') el.classList.toggle('filled',el.value.trim()!=='');
-  scheduleSave(key);
+  schedule(key);
 };
 
-window.toggleVoo=async function(key){
-  if(!cache[key])cache[key]=emptyDay();
-  cache[key].voo=!cache[key].voo;
-  scheduleSave(key);
-  renderCalendar();
-  await renderSchedule();
-};
-
-window.toggleAero=async function(key){
-  if(!cache[key])cache[key]=emptyDay();
-  cache[key].aeroclube.ativo=!cache[key].aeroclube.ativo;
-  scheduleSave(key);
-  renderCalendar();
-  await renderSchedule();
-};
-
-window.toggleTurma=async function(key,turma){
-  if(!cache[key])cache[key]=emptyDay();
-  cache[key].aeroclube.turmas[turma].ativo=!cache[key].aeroclube.turmas[turma].ativo;
-  scheduleSave(key);
-  renderCalendar();
-  await renderSchedule();
-};
-
-window.updateDayNotes=function(el){
+window.updateNotes=function(el){
   if(!cache[activeKey])cache[activeKey]=emptyDay();
-  cache[activeKey].notes=el.value;
-  scheduleSave(activeKey);
+  cache[activeKey].notes=el.value; schedule(activeKey);
+};
+
+window.toggleVoo=async function(k){
+  if(!cache[k])cache[k]=emptyDay();
+  cache[k].voo=!cache[k].voo;
+  schedule(k); renderCal(); await renderSchedule();
+};
+
+window.toggleAero=async function(k){
+  if(!cache[k])cache[k]=emptyDay();
+  cache[k].aeroclube.ativo=!cache[k].aeroclube.ativo;
+  schedule(k); renderCal(); await renderSchedule();
+};
+
+window.toggleTurma=async function(k,t){
+  if(!cache[k])cache[k]=emptyDay();
+  cache[k].aeroclube.turmas[t].ativo=!cache[k].aeroclube.turmas[t].ativo;
+  schedule(k); renderCal(); await renderSchedule();
+};
+
+window.toggleFeito=async function(k,slot){
+  if(!cache[k])cache[k]=emptyDay();
+  cache[k].slots[slot].feito=!cache[k].slots[slot].feito;
+  if(cache[k].slots[slot].feito) cache[k].slots[slot].remarcado=false;
+  schedule(k); await renderSchedule();
+};
+
+window.toggleRemarcado=async function(k,slot){
+  if(!cache[k])cache[k]=emptyDay();
+  cache[k].slots[slot].remarcado=!cache[k].slots[slot].remarcado;
+  if(cache[k].slots[slot].remarcado) cache[k].slots[slot].feito=false;
+  schedule(k); await renderSchedule();
+};
+
+window.toggleFixo=async function(k,slot){
+  if(!cache[k])cache[k]=emptyDay();
+  const nowFixo=!cache[k].slots[slot].fixo;
+  cache[k].slots[slot].fixo=nowFixo;
+  const {student}=cache[k].slots[slot];
+  const dt=kd(k);
+  const saves=[];
+  for(let w=1;w<=8;w++){
+    const future=new Date(dt); future.setDate(dt.getDate()+(w*7));
+    const sameM=future.getMonth()===dt.getMonth()&&future.getFullYear()===dt.getFullYear();
+    const nextM=future.getMonth()===(dt.getMonth()+1)%12&&(dt.getMonth()===11?future.getFullYear()===dt.getFullYear()+1:future.getFullYear()===dt.getFullYear());
+    if(sameM||nextM){
+      const fk=dk(future);
+      if(!cache[fk]) await loadDay(fk);
+      cache[fk].slots[slot].fixo=nowFixo;
+      if(nowFixo) cache[fk].slots[slot].student=student;
+      saves.push(saveDay(fk));
+    }
+  }
+  schedule(k); await Promise.all(saves);
+  sync('synced'); renderCal(); await renderSchedule();
 };
 
 window.clearDay=async function(){
-  const dt=keyToDate(activeKey);
-  const ds=`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${dt.getFullYear()}`;
-  if(!confirm(`Deseja limpar todos os dados de ${ds}?`))return;
-  cache[activeKey]=emptyDay();
-  await saveDay(activeKey);
-  renderCalendar();
-  await renderSchedule();
-};
-
-window.saveTeacherName=saveTeacherName;
-
-async function preloadMonth(year, month){
-  const daysInMonth=new Date(year,month+1,0).getDate();
-  const promises=[];
-  for(let d=1;d<=daysInMonth;d++){
-    const k=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    if(!cache[k]) promises.push(loadDay(k));
-  }
-  await Promise.all(promises);
-  renderCalendar();
-}
-
-window.changeMonth=async function(dir){
-  viewMonth+=dir;
-  if(viewMonth>11){viewMonth=0;viewYear++;}
-  if(viewMonth<0){viewMonth=11;viewYear--;}
-  renderCalendar();
-  await preloadMonth(viewYear,viewMonth);
+  const dt=kd(activeKey);
+  const ds=`${p2(dt.getDate())}/${p2(dt.getMonth()+1)}/${dt.getFullYear()}`;
+  if(!confirm(`Deseja limpar todos os dados de ${ds}?`)) return;
+  cache[activeKey]=emptyDay(); await saveDay(activeKey);
+  renderCal(); await renderSchedule();
 };
 
 async function init(){
-  await loadTeacherName();
-  await Promise.all([
-    renderSchedule(),
-    preloadMonth(viewYear,viewMonth)
-  ]);
-  setSyncStatus('synced');
-  document.getElementById('loadingOverlay').style.display='none';
+  await loadTeacher();
+  await Promise.all([renderSchedule(), preload(viewYear,viewMonth)]);
+  sync('synced');
+  document.getElementById('loading').style.display='none';
 }
 init();
 </script>
