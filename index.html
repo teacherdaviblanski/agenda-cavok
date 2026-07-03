@@ -1,3 +1,4 @@
+<!-- v20260703030512x -->
 <!-- v20260703024456 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -284,10 +285,12 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
   </div>
 
   <div class="d-month-nav">
-    <button class="d-month-arrow" onclick="changeMonth(-1)">&#8592;</button>
-    <span class="d-month-label" id="d-month"></span>
-    <button class="d-month-arrow" onclick="changeMonth(1)">&#8594;</button>
-    <button class="d-today-btn"   onclick="goToday()">Hoje</button>
+    <div style="display:flex;align-items:center;gap:4px;">
+      <button class="d-month-arrow" onclick="changeMonth(-1)">&#8592;</button>
+      <span class="d-month-label" id="d-month"></span>
+      <button class="d-month-arrow" onclick="changeMonth(1)">&#8594;</button>
+    </div>
+    <button class="d-today-btn" onclick="goToday()">Hoje</button>
   </div>
 
   <div class="d-cal-wrap">
@@ -331,10 +334,12 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
     <input type="text" id="m-teacher" placeholder="Seu nome..." oninput="saveTeacher()">
   </div>
   <div class="m-month-nav">
-    <button class="m-month-arrow" onclick="changeMonth(-1)">&#8592;</button>
-    <span class="m-month-label" id="m-month"></span>
-    <button class="m-month-arrow" onclick="changeMonth(1)">&#8594;</button>
-    <button class="m-today-btn"   onclick="goToday()">Hoje</button>
+    <div style="display:flex;align-items:center;gap:2px;">
+      <button class="m-month-arrow" onclick="changeMonth(-1)">&#8592;</button>
+      <span class="m-month-label" id="m-month"></span>
+      <button class="m-month-arrow" onclick="changeMonth(1)">&#8594;</button>
+    </div>
+    <button class="m-today-btn" onclick="goToday()">Hoje</button>
   </div>
   <div class="m-cal-wrap">
     <div class="m-cal-wds">
