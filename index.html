@@ -1,4 +1,4 @@
-<!-- v20260703151440 -->
+<!-- v20260703161524 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -689,7 +689,7 @@ async function renderSchedule(){
           <button class="ebtn feito-btn${v.feito?' on':''}"     onclick="toggleFeito('${activeKey}','${slot}')"     title="Aula feita">✅</button>
           <button class="ebtn fixo-btn${v.fixo?' on':''}"       onclick="toggleFixo('${activeKey}','${slot}')"      title="Fixo">🔒</button>
           <button class="ebtn remark-btn${v.remarcado?' on':''}" onclick="toggleRemarcado('${activeKey}','${slot}')" title="Remarcado">🔄</button>
-          <button class="wa-btn-slot${v.remarcado&&v.student&&getPhone(v.student)?'':' disabled'}" onclick="doWA(this)" data-student="${esc(v.student)}" data-slot="${slot}" data-key="${activeKey}" title="WhatsApp">📱</button>
+          <button class="wa-btn-slot${v.student&&getPhone(v.student)?'':' disabled'}" onclick="doWA(this)" data-student="${esc(v.student)}" data-slot="${slot}" data-key="${activeKey}" title="WhatsApp">📱</button>
         </div>
       </td>
     </tr>`;
@@ -744,7 +744,7 @@ async function renderSchedule(){
           <button class="ebtn feito-btn${v.feito?' on':''}"     onclick="toggleFeito('${activeKey}','${slot}')"     style="width:30px;height:28px;font-size:14px;">✅</button>
           <button class="ebtn fixo-btn${v.fixo?' on':''}"       onclick="toggleFixo('${activeKey}','${slot}')"      style="width:30px;height:28px;font-size:14px;">🔒</button>
           <button class="ebtn remark-btn${v.remarcado?' on':''}" onclick="toggleRemarcado('${activeKey}','${slot}')" style="width:30px;height:28px;font-size:14px;">🔄</button>
-          <button class="wa-btn-slot${v.remarcado&&v.student&&getPhone(v.student)?'':' disabled'}" style="width:30px;height:28px;font-size:14px;" onclick="doWA(this)" data-student="${esc(v.student)}" data-slot="${slot}" data-key="${activeKey}">📱</button>
+          <button class="wa-btn-slot${v.student&&getPhone(v.student)?'':' disabled'}" style="width:30px;height:28px;font-size:14px;" onclick="doWA(this)" data-student="${esc(v.student)}" data-slot="${slot}" data-key="${activeKey}">📱</button>
         </div>
       </div>
       <div class="m-slot-body">
@@ -901,6 +901,7 @@ window.addAluno = async function(){
   document.getElementById('cad-nome').value='';
   document.getElementById('cad-phone').value='';
   renderAlunosList();
+  await renderSchedule();
 };
 window.delAluno = async function(nome){
   if(!confirm(`Remover ${nome}?`)) return;
@@ -928,7 +929,7 @@ function buildWAMsg(studentName, slot, key){
   if(key===todK) quando = `hoje às ${slot}`;
   else if(key===tmrwK) quando = `${wdNames[wd]} às ${slot}`;
   else { const ds=`${p2(dt.getDate())}/${p2(dt.getMonth()+1)}`; quando=`${wdNames[wd]} (${ds}) às ${slot}`; }
-  return `Hello! How are you? 😊
+  return `Hello! How are you?
 Podemos confirmar nossa aula ${quando}?
 Thank you!`;
 }
@@ -938,6 +939,8 @@ window.doWA = function(btn){
   const slot    = btn.dataset.slot;
   const key     = btn.dataset.key;
   if(!student) return;
+  const phone = getPhone(student);
+  if(!phone){ alert('Número não cadastrado para ' + student + '.\nCadastre em ⚙️'); return; }
   window.sendWA(student, slot, key);
 };
 
