@@ -1,4 +1,4 @@
-<!-- v20260703020000 -->
+<!-- v20260703024456 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -505,11 +505,33 @@ function renderCal(){
   document.getElementById('m-cal').innerHTML=mC;
 }
 
+function countRealizadas(k){
+  if(!cache[k]) return 0;
+  return Object.values(cache[k].slots).filter(v=>v.feito).length;
+}
+
 function countCard(k,dayName,suffix,dateStr){
-  const n=countAulas(k);
-  const emoji=n===0?'📭':n>=8?'🏆':n>=5?'🔥':'📚';
-  const msg=n===0?'Nenhuma aula agendada':n===1?'1 aula agendada':n+' aulas agendadas';
-  return `<div class="count-card"><div class="count-num">${n}</div><div><div class="count-label">${emoji} ${msg}</div><div class="count-sub">📅 ${dayName}${suffix} · ${dateStr}</div></div></div>`;
+  const ag=countAulas(k);
+  const re=countRealizadas(k);
+  const pct=ag>0?Math.round((re/ag)*100):0;
+  const completo=ag>0&&re===ag;
+  return `<div class="count-card">
+    <div style="flex:1;display:flex;align-items:center;gap:12px;">
+      <div class="count-num" style="color:#f0c040;">${ag}</div>
+      <div>
+        <div class="count-label">📚 ${ag===0?'Sem aulas':ag===1?'Aula agendada':'Aulas agendadas'}</div>
+        <div class="count-sub">📅 ${dayName}${suffix} · ${dateStr}</div>
+      </div>
+    </div>
+    <div style="width:1.5px;height:44px;background:rgba(212,168,0,.3);margin:0 14px;flex-shrink:0;"></div>
+    <div style="flex:1;display:flex;align-items:center;gap:12px;">
+      <div class="count-num" style="color:#50d080;">${re}</div>
+      <div>
+        <div class="count-label">✅ ${re===0?'Nenhuma realizada':re===1?'Aula realizada':'Aulas realizadas'}</div>
+        ${ag>0?`<div style="background:rgba(255,255,255,.1);border-radius:6px;height:4px;width:80px;margin-top:5px;overflow:hidden;"><div style="background:linear-gradient(90deg,#50d080,#80e0a0);height:100%;border-radius:6px;width:${pct}%;"></div></div><div style="font-size:9px;color:#80e0a0;font-weight:600;margin-top:3px;">${completo?'100% ⭐ Dia completo!':pct+'% concluído'}</div>`:''}
+      </div>
+    </div>
+  </div>`;
 }
 
 function resumoHTML(k){
