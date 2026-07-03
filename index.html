@@ -170,14 +170,14 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 .d-teacher input { border:none; background:transparent; font-size:14px; color:#1a3a6b; font-weight:500; flex:1; outline:none; font-family:inherit; }
 .d-teacher input::placeholder { color:#b0a060; font-weight:400; }
 
-.d-month-nav { background:#1a3a6b; padding:12px 28px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.d-month-label { font-size:16px; font-weight:600; color:#f0c040; min-width:200px; text-align:center; }
-.d-month-arrow { background:rgba(240,192,64,.15); border:1.5px solid rgba(240,192,64,.4); color:#f0c040; width:34px; height:34px; border-radius:8px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; transition:all .15s; }
-.d-month-arrow:hover { background:rgba(240,192,64,.28); }
-.d-today-btn { background:rgba(240,192,64,.15); border:1.5px solid rgba(240,192,64,.4); color:#f0c040; padding:6px 14px; border-radius:8px; font-size:12px; font-weight:500; cursor:pointer; font-family:inherit; transition:all .15s; }
-.d-today-btn:hover { background:rgba(240,192,64,.28); }
+.d-month-nav { background:#1a3a6b; padding:10px 28px; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #d4a800; }
+.d-month-label { font-size:16px; font-weight:800; color:#f0c040; padding:0 10px; white-space:nowrap; }
+.d-month-arrow { background:transparent; border:none; color:#f0c040; width:34px; height:34px; font-size:18px; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; transition:opacity .15s; }
+.d-month-arrow:hover { opacity:.7; }
+.d-today-btn { background:transparent; border:none; color:#f0c040; padding:8px 0; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; letter-spacing:.3px; transition:opacity .15s; }
+.d-today-btn:hover { opacity:.7; }
 
-.d-cal-wrap { background:#f5f0e0; padding:14px 28px 16px; border-bottom:3px solid #d4a800; }
+.d-cal-wrap { background:#f5f0e0; padding:14px 28px 16px; border-bottom:2px solid #d4a800; }
 .d-cal-wds  { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:6px; }
 .d-cal-wd   { text-align:center; font-size:11px; font-weight:600; color:#7a6820; padding:4px 0; text-transform:uppercase; letter-spacing:.5px; }
 .d-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
@@ -206,7 +206,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 .m-month-label { font-size:14px; font-weight:600; color:#f0c040; }
 .m-month-arrow { background:rgba(240,192,64,.15); border:1.5px solid rgba(240,192,64,.4); color:#f0c040; width:32px; height:32px; border-radius:8px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; }
 .m-today-btn   { background:rgba(240,192,64,.15); border:1.5px solid rgba(240,192,64,.4); color:#f0c040; padding:5px 12px; border-radius:6px; font-size:11px; font-weight:500; cursor:pointer; font-family:inherit; }
-.m-cal-wrap { background:#f5f0e0; padding:10px 12px 12px; border-bottom:3px solid #d4a800; }
+.m-cal-wrap { background:#f5f0e0; padding:10px 12px 12px; border-bottom:2px solid #d4a800; }
 .m-cal-wds  { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:4px; }
 .m-cal-wd   { text-align:center; font-size:9px; font-weight:600; color:#7a6820; padding:2px 0; }
 .m-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
