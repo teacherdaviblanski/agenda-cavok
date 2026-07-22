@@ -1,4 +1,4 @@
-<!-- v20260703161524 -->
+<!-- v20260722222246 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -699,7 +699,13 @@ async function renderSchedule(){
     ${resumoHTML(activeKey)}
     ${countCard(activeKey,dayName,suffix,dateStr)}
     <div class="d-day-header" style="margin-top:12px;">
-      <div class="d-day-title">📅 ${dayName}${suffix} — ${dateStr}</div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="width:4px;height:52px;background:#d4a800;border-radius:4px;flex-shrink:0;"></div>
+        <div>
+          <div style="font-size:30px;font-weight:800;color:#1a3a6b;line-height:1;">${dayName}${suffix}</div>
+          <div style="font-size:13px;color:#888;margin-top:4px;">📅 ${dateStr}</div>
+        </div>
+      </div>
     </div>
     ${bannersHTML(activeKey,'28px')}
     <table class="d-table" style="margin:0 12px;width:calc(100% - 24px);">
