@@ -1,4 +1,4 @@
-<!-- v20260722222246 -->
+<!-- v20260722222811 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -566,7 +566,8 @@ function renderCal(){
     let dc='cal-day'; if(isA)dc+=' active'; if(isT)dc+=' today-mark'; if(isV)dc+=' voo';
     let mc='m-cal-day'; if(isA)mc+=' active'; if(isT)mc+=' today-mark'; if(isV)mc+=' voo';
     const ind=pillsHTML(k,isA);
-    dC+=`<div class="${dc}" onclick="selectDay('${k}')"><span class="cal-num">${d}</span><span class="cal-wkd">${WEEKDAYS[wd].slice(0,3)}</span><div class="cal-indicators">${ind}</div></div>`;
+    const hojeLabel=isT?'<span class="cal-hoje-label">hoje</span>':'';
+    dC+=`<div class="${dc}" onclick="selectDay('${k}')"><span class="cal-num">${d}</span><span class="cal-wkd">${WEEKDAYS[wd].slice(0,3)}</span>${hojeLabel}<div class="cal-indicators">${ind}</div></div>`;
     mC+=`<div class="${mc}" onclick="selectDay('${k}')"><span class="m-cal-num">${d}</span><span class="m-cal-wkd">${WEEKDAYS[wd].slice(0,1)}</span><div class="cal-indicators" style="transform:scale(.85)">${ind}</div></div>`;
   }
   document.getElementById('d-cal').innerHTML=dC;
