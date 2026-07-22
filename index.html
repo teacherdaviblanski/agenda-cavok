@@ -1,4 +1,4 @@
-<!-- v20260722222811 -->
+<!-- v20260722223538 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -37,9 +37,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 /* ── CALENDAR CELLS ── */
 .cal-day { background:white; border:1.5px solid #e0d080; border-radius:8px; padding:5px 3px; text-align:center; cursor:pointer; min-height:62px; display:flex; flex-direction:column; align-items:center; gap:2px; transition:all .12s; }
 .cal-day:hover { background:#fff8dc; border-color:#c9a800; transform:translateY(-1px); }
-.cal-day.active { background:#1a3a6b; border-color:#1a3a6b; box-shadow:0 3px 10px rgba(26,58,107,.3); }
-.cal-day.active .cal-num { color:#f0c040; }
-.cal-day.active .cal-wkd { color:#a8c4e8; }
+/* active handled below */
 .cal-day.voo { background:#d4a800; border-color:#b38a00; }
 .cal-day.voo .cal-num { color:#1a3a6b; font-weight:700; }
 .cal-day.voo .cal-wkd { color:#1a3a6b; opacity:.7; }
@@ -212,9 +210,9 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 .m-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
 .m-cal-day  { background:white; border:1px solid #e0d080; border-radius:6px; padding:4px 2px; text-align:center; cursor:pointer; min-height:50px; display:flex; flex-direction:column; align-items:center; gap:2px; transition:all .12s; }
 .m-cal-day:hover { background:#fff8dc; }
-.m-cal-day.active { background:#1a3a6b; border-color:#1a3a6b; }
-.m-cal-day.active .m-cal-num { color:#f0c040; }
-.m-cal-day.active .m-cal-wkd { color:#a8c4e8; }
+.m-cal-day.active { background:#2a9d5c; border-color:#1e7a45; }
+.m-cal-day.active .m-cal-num { color:white; }
+.m-cal-day.active .m-cal-wkd { color:rgba(255,255,255,.8); }
 .m-cal-day.voo { background:#d4a800; border-color:#b38a00; }
 .m-cal-day.voo .m-cal-num { color:#1a3a6b; font-weight:700; }
 .m-cal-day.today-mark { border-color:#d4a800; border-width:2px; }
