@@ -1,4 +1,4 @@
-<!-- v20260722223538 -->
+<!-- v20260722224931 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -37,13 +37,16 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 /* ── CALENDAR CELLS ── */
 .cal-day { background:white; border:1.5px solid #e0d080; border-radius:8px; padding:5px 3px; text-align:center; cursor:pointer; min-height:62px; display:flex; flex-direction:column; align-items:center; gap:2px; transition:all .12s; }
 .cal-day:hover { background:#fff8dc; border-color:#c9a800; transform:translateY(-1px); }
-/* active handled below */
+.cal-day.active { background:#2a9d5c !important; border-color:#1e7a45 !important; box-shadow:0 3px 10px rgba(42,157,92,.35) !important; }
+.cal-day.active .cal-num { color:white !important; }
+.cal-day.active .cal-wkd { color:rgba(255,255,255,.8) !important; }
+.cal-day.active .cal-hoje-label { color:white !important; }
 .cal-day.voo { background:#d4a800; border-color:#b38a00; }
 .cal-day.voo .cal-num { color:#1a3a6b; font-weight:700; }
 .cal-day.voo .cal-wkd { color:#1a3a6b; opacity:.7; }
 .cal-day.today-mark { border-color:#d4a800; border-width:2px; }
 .cal-day.today-mark .cal-num { color:#8a5f00; font-weight:700; }
-.cal-day.active.today-mark .cal-num { color:#f0c040; }
+.cal-day.active.today-mark .cal-num { color:white !important; }
 .cal-day.empty { background:transparent; border-color:transparent; cursor:default; pointer-events:none; }
 .cal-num { font-size:14px; font-weight:600; color:#1a3a6b; line-height:1; }
 .cal-wkd { font-size:9px; color:#888; }
