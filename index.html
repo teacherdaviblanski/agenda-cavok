@@ -455,7 +455,7 @@ const MONTHS   = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho',
 const WEEKDAYS = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 const SUFFIXES = ['','‑feira','‑feira','‑feira','‑feira','‑feira',''];
 const SLOTS = ['06:00','06:30','07:00','07:30','08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30','21:00','21:30','22:00'];
-const AERO_BLOCKED = ['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30','23:00'];
+const AERO_BLOCKED = ['18:00','18:30','19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30','23:00'];
 const TURMAS = ['pp','pc','inva','cms'];
 const TURMA_LABELS = {pp:'PP',pc:'PC',inva:'INVA',cms:'CMS'};
 const TURMA_NAMES  = {pp:'Piloto Privado',pc:'Piloto Comercial',inva:'INVA',cms:'CMS'};
@@ -694,7 +694,7 @@ function aeroHTML(k,pad){
   }).join('');
   return `<div class="aero-section">
     <div class="aero-block-bar" style="padding:8px ${pad};">
-      <span class="aero-block-badge">🛩️ 19:00 → 23:00</span>
+      <span class="aero-block-badge">🛩️ 18:00 → 23:00</span>
       <div><div class="aero-block-text">Agenda bloqueada — Aeroclube</div><div class="aero-block-sub">Horários indisponíveis para aulas regulares</div></div>
     </div>
     <div class="aero-turmas-label" style="padding:10px ${pad} 6px;">Toque nas turmas para ativar/desativar:</div>
