@@ -1,4 +1,4 @@
-<!-- v20260722224931 -->
+<!-- v20261005162220 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -278,6 +278,23 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 .wa-btn-slot.disabled { background:#e0e0e0; cursor:default; opacity:.5; }
 .wa-btn-slot.disabled:hover { transform:none; background:#e0e0e0; }
 
+/* ── ACADEMIA ── */
+.acad-banner { border-radius:10px; padding:10px 14px; border:1.5px solid #6b3fa0; background:#f3eeff; display:flex; align-items:center; justify-content:space-between; }
+.acad-banner.on { background:#6b3fa0; border-color:#4a2880; }
+.acad-banner.on .acad-label { color:#e8d5ff; }
+.acad-label { font-size:13px; font-weight:600; color:#6b3fa0; }
+.toggle-btn.acad-on { background:#e8d5ff; color:#4a2880; }
+.acad-time-row { display:flex; align-items:center; gap:10px; background:#f8f4ff; padding:10px 16px; border-bottom:1px solid #e0d5f5; flex-wrap:wrap; }
+.acad-time-label { font-size:12px; font-weight:600; color:#6b3fa0; white-space:nowrap; }
+.acad-time-input { border:1.5px solid #c4a0e8; border-radius:8px; padding:6px 10px; font-size:14px; color:#4a2880; font-weight:600; background:white; outline:none; font-family:inherit; width:80px; text-align:center; }
+.acad-dur-select { border:1.5px solid #c4a0e8; border-radius:8px; padding:5px 8px; font-size:13px; color:#4a2880; background:white; outline:none; font-family:inherit; }
+.acad-info-bar { background:#f3eeff; padding:8px 16px; border-bottom:2px solid #6b3fa0; display:flex; gap:6px; flex-wrap:wrap; align-items:center; font-size:11px; color:#6b3fa0; font-weight:600; }
+.acad-blocked-badge { background:#6b3fa0; color:white; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; }
+.acad-free-badge   { background:#2a9d5c; color:white; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; }
+.slot-row-acad { background:#f3eeff; }
+.time-badge-acad { background:#e0d0f8; border:1px solid #b090e0; color:#6b3fa0; border-radius:8px; padding:3px 8px; font-size:12px; font-weight:700; }
+.acad-block-msg { font-size:12px; color:#6b3fa0; font-weight:500; }
+
 /* ── PRINT ── */
 @media print {
   body { background:white; }
@@ -460,7 +477,7 @@ function emptyDay(){
   SLOTS.forEach(s=>slots[s]={student:'',fixo:false,feito:false,remarcado:false});
   const aeroclube={ativo:false,turmas:{}};
   TURMAS.forEach(t=>aeroclube.turmas[t]={ativo:false,aluno:'',obs:''});
-  return {slots,notes:'',voo:false,aeroclube};
+  return {slots,notes:'',voo:false,aeroclube,academia:{ativo:false,inicio:'',duracao:60}};
 }
 
 function mergeDay(data){
@@ -470,6 +487,7 @@ function mergeDay(data){
   if(data.slots) Object.keys(data.slots).forEach(s=>{
     if(d.slots[s]) d.slots[s]={student:data.slots[s].student||'',fixo:!!data.slots[s].fixo,feito:!!data.slots[s].feito,remarcado:!!data.slots[s].remarcado};
   });
+  if(data.academia){ d.academia={ativo:!!data.academia.ativo,inicio:data.academia.inicio||'',duracao:Number(data.academia.duracao)||60}; }
   if(data.aeroclube){
     d.aeroclube.ativo=!!data.aeroclube.ativo;
     if(data.aeroclube.turmas) TURMAS.forEach(t=>{ if(data.aeroclube.turmas[t]) d.aeroclube.turmas[t]={...d.aeroclube.turmas[t],...data.aeroclube.turmas[t]}; });
@@ -619,6 +637,32 @@ function resumoHTML(k){
 
 function bannersHTML(k,pad){
   const vOn=isVoo(k), aOn=cache[k]&&cache[k].aeroclube&&cache[k].aeroclube.ativo;
+  const ac=(cache[k]&&cache[k].academia)||{ativo:false,inicio:'',duracao:60};
+  const acOn=ac.ativo;
+  const blocked=getAcadBlockedSlots(k);
+  const lastBlocked=blocked[blocked.length-1];
+  let freeAfter='';
+  if(lastBlocked){
+    const [lh,lm]=lastBlocked.split(':').map(Number);
+    freeAfter=SLOTS.find(s=>{const[sh,sm]=s.split(':').map(Number);return sh*60+sm>lh*60+lm;})||'';
+  }
+  const acadExtra=acOn?`
+    <div class="acad-time-row" style="padding:10px ${pad};">
+      <span class="acad-time-label">🏋️ Início:</span>
+      <input class="acad-time-input" type="time" value="${ac.inicio}" onchange="updateAcad('${k}','inicio',this.value)">
+      <span style="font-size:12px;color:#888;">Duração:</span>
+      <select class="acad-dur-select" onchange="updateAcad('${k}','duracao',parseInt(this.value))">
+        <option value="60"${ac.duracao==60?' selected':''}>1h</option>
+        <option value="90"${ac.duracao==90?' selected':''}>1h30</option>
+        <option value="120"${ac.duracao==120?' selected':''}>2h</option>
+      </select>
+      ${ac.inicio&&blocked.length?`<span style="font-size:11px;color:#888;"> → bloqueia: ${blocked.join(', ')}</span>`:''}
+    </div>
+    ${ac.inicio&&blocked.length?`<div class="acad-info-bar" style="padding:8px ${pad};">
+      Bloqueados: ${blocked.map(s=>`<span class="acad-blocked-badge">${s}</span>`).join('')}
+      ${freeAfter?`<span style="color:#888;">livre a partir de</span><span class="acad-free-badge">${freeAfter} ✓</span>`:''}
+    </div>`:''}
+  `:'';
   return `<div class="banner-row" style="padding:10px ${pad};gap:8px;">
     <div class="banner-item${vOn?' voo-on':''}">
       <span class="banner-label">✈️ ${vOn?'Dia de voo ativo':'Marcar como dia de voo'}</span>
@@ -628,7 +672,12 @@ function bannersHTML(k,pad){
       <span class="banner-label">🛩️ ${aOn?'Aeroclube ativado':'Aula no Aeroclube'}</span>
       <button class="toggle-btn ${aOn?'aero-on':'off'}" onclick="toggleAero('${k}')">${aOn?'✓ Ativo':'Ativar'}</button>
     </div>
-  </div>`;
+    <div class="acad-banner${acOn?' on':''}">
+      <span class="acad-label">🏋️ ${acOn?'Academia ativada':'Academia'}</span>
+      <button class="toggle-btn ${acOn?'acad-on':'off'}" onclick="toggleAcad('${k}')">${acOn?'✓ Ativo':'Ativar'}</button>
+    </div>
+  </div>
+  ${acadExtra}`;
 }
 
 function aeroHTML(k,pad){
@@ -653,6 +702,35 @@ function aeroHTML(k,pad){
   </div>`;
 }
 
+function getAcadBlockedSlots(k){
+  if(!cache[k]||!cache[k].academia||!cache[k].academia.ativo) return [];
+  const {inicio,duracao}=cache[k].academia;
+  if(!inicio) return [];
+  const [h,m]=inicio.split(':').map(Number);
+  const startMins=h*60+m;
+  const endMins=startMins+Number(duracao);
+  const blockStart=startMins-60;
+  const blockEnd=endMins+30;
+  return SLOTS.filter(s=>{
+    const [sh,sm]=s.split(':').map(Number);
+    const sm2=sh*60+sm;
+    return sm2>=blockStart && sm2<blockEnd;
+  });
+}
+
+function acadBlockMsg(slot,k){
+  const {inicio,duracao}=cache[k].academia;
+  const [h,m]=inicio.split(':').map(Number);
+  const startMins=h*60+m;
+  const endMins=startMins+Number(duracao);
+  const [sh,sm]=slot.split(':').map(Number);
+  const slotMins=sh*60+sm;
+  if(slotMins<startMins-30) return '🏋️ Preparando para ir à academia';
+  if(slotMins<startMins)    return '🏋️ A caminho da academia';
+  if(slotMins<endMins)      return '🏋️ Treino em andamento';
+  return '🏋️ Retorno + preparo para aulas';
+}
+
 async function renderSchedule(){
   const data=await loadDay(activeKey);
   const dt=kd(activeKey), wd=dt.getDay();
@@ -664,8 +742,16 @@ async function renderSchedule(){
   document.getElementById('m-sub').textContent=dateStr;
 
   // ── DESKTOP ROWS ──
+  const acadBlocked=getAcadBlockedSlots(activeKey);
   let rows='', aeroInserted=false;
   SLOTS.forEach(slot=>{
+    if(acadBlocked.includes(slot)&&!aeroOn){
+      rows+=`<tr class="slot-row-acad" id="slot-${slot}">
+        <td style="padding:5px 8px;text-align:center;width:72px;"><span class="time-badge-acad">${slot}</span></td>
+        <td colspan="2" style="padding:6px 12px;"><span class="acad-block-msg">${acadBlockMsg(slot,activeKey)}</span></td>
+      </tr>`;
+      return;
+    }
     if(aeroOn&&AERO_BLOCKED.includes(slot)){
       if(!aeroInserted){
         aeroInserted=true;
@@ -732,6 +818,18 @@ async function renderSchedule(){
 
   let mCards='', mAeroInserted=false;
   SLOTS.forEach(slot=>{
+    if(acadBlocked.includes(slot)&&!aeroOn){
+      mCards+=`<div class="m-slot-card" id="slot-${slot}" style="background:#f3eeff;">
+        <div class="m-slot-header" style="background:#6b3fa0;">
+          <span class="m-slot-time">${slot}</span>
+          <span style="font-size:10px;color:#e8d5ff;font-weight:600;">🏋️ Academia</span>
+        </div>
+        <div class="m-slot-body" style="padding:8px 12px;">
+          <span class="acad-block-msg">${acadBlockMsg(slot,activeKey)}</span>
+        </div>
+      </div>`;
+      return;
+    }
     if(aeroOn&&AERO_BLOCKED.includes(slot)){
       if(!mAeroInserted){ mAeroInserted=true; mCards+=`<div style="margin-bottom:8px;">${aeroHTML(activeKey,'12px')}</div>`; }
       return;
@@ -794,6 +892,20 @@ window.updateTurma=function(el){
 window.updateNotes=function(el){
   if(!cache[activeKey])cache[activeKey]=emptyDay();
   cache[activeKey].notes=el.value; schedule(activeKey);
+};
+
+window.toggleAcad=async function(k){
+  if(!cache[k])cache[k]=emptyDay();
+  if(!cache[k].academia)cache[k].academia={ativo:false,inicio:'',duracao:60};
+  cache[k].academia.ativo=!cache[k].academia.ativo;
+  schedule(k); renderCal(); await renderSchedule();
+};
+
+window.updateAcad=async function(k,field,val){
+  if(!cache[k])cache[k]=emptyDay();
+  if(!cache[k].academia)cache[k].academia={ativo:true,inicio:'',duracao:60};
+  cache[k].academia[field]=val;
+  schedule(k); await renderSchedule();
 };
 
 window.toggleVoo=async function(k){
