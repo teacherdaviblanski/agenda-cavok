@@ -1,4 +1,4 @@
-<!-- v20261005162220 -->
+<!-- v20261008175021 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -273,6 +273,12 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 .no-alunos { font-size:13px; color:#aaa; font-style:italic; padding:8px 0; }
 
 /* WA BUTTON */
+.zoom-btn-slot { width:34px; height:32px; background:#2D8CFF; border:none; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:16px; cursor:pointer; flex-shrink:0; transition:all .15s; }
+.zoom-btn-slot:hover { background:#1a7ae8; transform:scale(1.08); }
+.zoom-btn-slot.disabled { background:#e0e0e0; cursor:default; opacity:.5; }
+.zoom-btn-slot.disabled:hover { transform:none; background:#e0e0e0; }
+.aluno-zoom { font-size:10px; color:#2D8CFF; margin-top:1px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:180px; }
+
 .wa-btn-slot { width:34px; height:32px; background:#25d366; border:none; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:16px; cursor:pointer; flex-shrink:0; transition:all .15s; }
 .wa-btn-slot:hover { background:#20ba5a; transform:scale(1.08); }
 .wa-btn-slot.disabled { background:#e0e0e0; cursor:default; opacity:.5; }
@@ -433,6 +439,10 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
         <div class="fg">
           <label>WhatsApp</label>
           <input type="tel" id="cad-phone" placeholder="+55 43 99999-9999" />
+        </div>
+        <div class="fg">
+          <label>Link do Zoom (opcional)</label>
+          <input type="url" id="cad-zoom" placeholder="https://zoom.us/j/..." />
         </div>
         <button class="modal-add" onclick="addAluno()">+ Adicionar</button>
       </div>
@@ -778,6 +788,7 @@ async function renderSchedule(){
           <button class="ebtn fixo-btn${v.fixo?' on':''}"       onclick="toggleFixo('${activeKey}','${slot}')"      title="Fixo">🔒</button>
           <button class="ebtn remark-btn${v.remarcado?' on':''}" onclick="toggleRemarcado('${activeKey}','${slot}')" title="Remarcado">🔄</button>
           <button class="wa-btn-slot${v.student&&getPhone(v.student)?'':' disabled'}" onclick="doWA(this)" data-student="${esc(v.student)}" data-slot="${slot}" data-key="${activeKey}" title="WhatsApp">📱</button>
+          <button class="zoom-btn-slot${v.student&&getZoom(v.student)?'':' disabled'}" onclick="doZoom(this)" data-student="${esc(v.student)}" title="Zoom">🎥</button>
         </div>
       </td>
     </tr>`;
@@ -851,6 +862,7 @@ async function renderSchedule(){
           <button class="ebtn fixo-btn${v.fixo?' on':''}"       onclick="toggleFixo('${activeKey}','${slot}')"      style="width:30px;height:28px;font-size:14px;">🔒</button>
           <button class="ebtn remark-btn${v.remarcado?' on':''}" onclick="toggleRemarcado('${activeKey}','${slot}')" style="width:30px;height:28px;font-size:14px;">🔄</button>
           <button class="wa-btn-slot${v.student&&getPhone(v.student)?'':' disabled'}" style="width:30px;height:28px;font-size:14px;" onclick="doWA(this)" data-student="${esc(v.student)}" data-slot="${slot}" data-key="${activeKey}">📱</button>
+          <button class="zoom-btn-slot${v.student&&getZoom(v.student)?'':' disabled'}" style="width:30px;height:28px;font-size:14px;" onclick="doZoom(this)" data-student="${esc(v.student)}" title="Zoom">🎥</button>
         </div>
       </div>
       <div class="m-slot-body">
@@ -977,7 +989,12 @@ let alunosDB = {};
 async function loadAlunos(){
   try{
     const snap = await getDoc(doc(db,'config','alunos'));
-    if(snap.exists()) alunosDB = snap.data().lista||{};
+    if(snap.exists()){
+      const raw = snap.data().lista||{};
+      // migrate: old format stored plain string, new format stores {phone,zoom}
+      Object.keys(raw).forEach(k=>{ if(typeof raw[k]==='string') raw[k]={phone:raw[k],zoom:''}; });
+      alunosDB = raw;
+    }
   }catch(e){}
   renderAlunosList();
 }
@@ -992,13 +1009,16 @@ function renderAlunosList(){
   const keys = Object.keys(alunosDB);
   if(!keys.length){ el.innerHTML='<div class="no-alunos">Nenhum aluno cadastrado ainda.</div>'; return; }
   el.innerHTML = keys.map(nome=>{
-    const phone = alunosDB[nome];
+    const entry = alunosDB[nome]||{};
+    const phone = entry.phone||'';
+    const zoom  = entry.zoom||'';
     const inicial = nome.charAt(0).toUpperCase();
     return `<div class="aluno-card">
       <div class="aluno-avatar">${inicial}</div>
-      <div style="flex:1;">
+      <div style="flex:1;min-width:0;">
         <div class="aluno-name">${esc(nome)}</div>
         <div class="aluno-phone">${esc(phone)}</div>
+        ${zoom?`<div class="aluno-zoom">🎥 ${esc(zoom)}</div>`:''}
       </div>
       <div class="aluno-del" onclick="delAluno('${esc(nome)}')">🗑️</div>
     </div>`;
@@ -1015,11 +1035,13 @@ window.closeCadastro = function(){
 window.addAluno = async function(){
   const nome  = document.getElementById('cad-nome').value.trim();
   const phone = document.getElementById('cad-phone').value.trim();
+  const zoom  = document.getElementById('cad-zoom').value.trim();
   if(!nome||!phone){ alert('Preencha o nome e o WhatsApp!'); return; }
-  alunosDB[nome] = phone;
+  alunosDB[nome] = {phone, zoom};
   await saveAlunos();
   document.getElementById('cad-nome').value='';
   document.getElementById('cad-phone').value='';
+  document.getElementById('cad-zoom').value='';
   renderAlunosList();
   await renderSchedule();
 };
@@ -1034,7 +1056,18 @@ function getPhone(studentName){
   if(!studentName) return null;
   const name = studentName.trim().toLowerCase();
   const key = Object.keys(alunosDB).find(k=>k.trim().toLowerCase()===name);
-  return key ? alunosDB[key] : null;
+  if(!key) return null;
+  const entry = alunosDB[key];
+  return typeof entry==='string' ? entry : (entry.phone||null);
+}
+
+function getZoom(studentName){
+  if(!studentName) return null;
+  const name = studentName.trim().toLowerCase();
+  const key = Object.keys(alunosDB).find(k=>k.trim().toLowerCase()===name);
+  if(!key) return null;
+  const entry = alunosDB[key];
+  return typeof entry==='string' ? null : (entry.zoom||null);
 }
 
 function buildWAMsg(studentName, slot, key){
@@ -1053,6 +1086,13 @@ function buildWAMsg(studentName, slot, key){
 Podemos confirmar nossa aula ${quando}?
 Thank you!`;
 }
+
+window.doZoom = function(btn){
+  const student = btn.dataset.student;
+  const zoom = getZoom(student);
+  if(!zoom){ alert('Link do Zoom não cadastrado para ' + student + '.\nCadastre em ⚙️'); return; }
+  window.open(zoom, '_blank');
+};
 
 window.doWA = function(btn){
   const student = btn.dataset.student;
