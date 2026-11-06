@@ -1,4 +1,4 @@
-<!-- v20261008175021 -->
+<!-- v20261106193621 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -301,6 +301,48 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 .time-badge-acad { background:#e0d0f8; border:1px solid #b090e0; color:#6b3fa0; border-radius:8px; padding:3px 8px; font-size:12px; font-weight:700; }
 .acad-block-msg { font-size:12px; color:#6b3fa0; font-weight:500; }
 
+
+/* ══ VISÃO SEMANAL ══ */
+.week-modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:flex;align-items:center;justify-content:center;padding:12px; }
+.week-modal { background:#f5f0e8;border-radius:16px;width:100%;max-width:1200px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.35); }
+.week-modal-header { background:#1a3a6b;color:white;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0; }
+.week-modal-title { font-size:16px;font-weight:700;color:#f0c040; }
+.week-modal-nav { display:flex;align-items:center;gap:8px; }
+.week-nav-btn { background:rgba(255,255,255,.15);border:none;color:white;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center; }
+.week-nav-btn:hover { background:rgba(255,255,255,.28); }
+.week-label { font-size:13px;font-weight:600;color:#f0c040;white-space:nowrap; }
+.week-close { background:none;border:none;color:#ccc;font-size:20px;cursor:pointer;padding:0 4px; }
+.week-close:hover { color:white; }
+.week-body { overflow:auto;flex:1;padding:0; }
+.week-grid { display:grid;min-width:700px; }
+.week-col-headers { display:grid;position:sticky;top:0;z-index:10;background:#1a3a6b; }
+.week-day-hdr { padding:8px 6px;text-align:center;border-right:1px solid rgba(255,255,255,.1); }
+.week-day-hdr-name { font-size:11px;font-weight:700;color:#f0c040;text-transform:uppercase; }
+.week-day-hdr-date { font-size:13px;font-weight:800;color:white;margin-top:1px; }
+.week-day-hdr.today-col { background:#d4a800; }
+.week-day-hdr.today-col .week-day-hdr-name,
+.week-day-hdr.today-col .week-day-hdr-date { color:#1a3a6b; }
+.week-time-col { width:52px;flex-shrink:0; }
+.week-row { display:grid;border-bottom:1px solid #e8dfc8; }
+.week-row:hover { background:#fdf8ef; }
+.week-time-cell { padding:3px 6px;text-align:right;font-size:10px;font-weight:600;color:#b0a070;border-right:2px solid #d4a800;background:#faf6ed;position:sticky;left:0;z-index:5; }
+.week-slot-cell { padding:3px 4px;border-right:1px solid #e8dfc8;min-height:32px;position:relative;cursor:pointer; }
+.week-slot-cell:hover { background:#fff8e8; }
+.week-slot-cell.today-col { background:#fffbe8; }
+.week-slot-cell.has-aula { background:#f0fff4; }
+.week-slot-cell.today-col.has-aula { background:#e8ffe8; }
+.week-aula-pill { background:#2a9d5c;color:white;border-radius:6px;padding:2px 6px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:100%;cursor:pointer;transition:opacity .15s; }
+.week-aula-pill:hover { opacity:.85; }
+.week-aula-pill.feito { background:#1a7a45; }
+.week-aula-pill.fixo  { background:#1a3a6b; }
+.week-aula-pill.remark{ background:#c07020; }
+.week-blocked-aero { background:repeating-linear-gradient(135deg,#fff8e0,#fff8e0 4px,#fdf0c0 4px,#fdf0c0 8px); }
+.week-blocked-acad { background:#f3eeff; }
+.week-voo-row { background:repeating-linear-gradient(135deg,#e8f4ff,#e8f4ff 4px,#d0e8ff 4px,#d0e8ff 8px) !important; }
+.week-legend { display:flex;gap:12px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid #e0d8c0;background:#faf6ed;font-size:11px;flex-shrink:0; }
+.week-legend-item { display:flex;align-items:center;gap:4px;color:#666; }
+.week-legend-dot { width:12px;height:12px;border-radius:3px;flex-shrink:0; }
+
 /* ── PRINT ── */
 @media print {
   body { background:white; }
@@ -331,6 +373,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
       <div class="sync-wrap"><div class="sync-dot" id="d-dot"></div><span id="d-sync">conectando...</span></div>
       <button class="btn btn-danger" onclick="clearDay()">🗑 Limpar dia</button>
       <button class="btn btn-gold"   onclick="window.print()">🖨 Imprimir</button>
+      <button class="btn btn-gold"   onclick="openWeekModal()" title="Visão semanal">📅 Semana</button>
       <button class="btn btn-gold"   onclick="openCadastro()" title="Cadastro de alunos">⚙️</button>
     </div>
   </div>
@@ -450,6 +493,32 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
         <div class="alunos-list-title">👥 Alunos cadastrados</div>
         <div id="alunosList"></div>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ MODAL VISÃO SEMANAL ══ -->
+<div class="week-modal-overlay" id="weekModal" style="display:none;" onclick="if(event.target===this)closeWeekModal()">
+  <div class="week-modal">
+    <div class="week-modal-header">
+      <span class="week-modal-title">📅 Visão Semanal</span>
+      <div class="week-modal-nav">
+        <button class="week-nav-btn" onclick="shiftWeek(-1)">&#8592;</button>
+        <span class="week-label" id="week-range-label"></span>
+        <button class="week-nav-btn" onclick="shiftWeek(1)">&#8594;</button>
+        <button class="week-nav-btn" onclick="weekGoToday()" style="font-size:11px;width:auto;padding:0 8px;">Hoje</button>
+      </div>
+      <button class="week-close" onclick="closeWeekModal()">✕</button>
+    </div>
+    <div class="week-body" id="weekBody"></div>
+    <div class="week-legend">
+      <div class="week-legend-item"><div class="week-legend-dot" style="background:#2a9d5c;"></div> Agendada</div>
+      <div class="week-legend-item"><div class="week-legend-dot" style="background:#1a7a45;"></div> Feita</div>
+      <div class="week-legend-item"><div class="week-legend-dot" style="background:#1a3a6b;"></div> Fixo</div>
+      <div class="week-legend-item"><div class="week-legend-dot" style="background:#c07020;"></div> Remarcado</div>
+      <div class="week-legend-item"><div class="week-legend-dot" style="background:#fdf0c0;border:1px solid #d4a800;"></div> Aeroclube</div>
+      <div class="week-legend-item"><div class="week-legend-dot" style="background:#e0d0f8;"></div> Academia</div>
     </div>
   </div>
 </div>
@@ -984,6 +1053,135 @@ window.clearDay=async function(){
 };
 
 // ── ALUNOS CADASTRADOS ──
+
+// ══ VISÃO SEMANAL ══
+let weekOffset = 0; // semanas em relação à atual
+
+function getWeekStart(offset){
+  const d = new Date(TODAY);
+  const day = d.getDay(); // 0=dom
+  d.setDate(d.getDate() - day + offset * 7);
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+
+window.selectDay = function(k){
+  const d = kd(k);
+  currentYear  = d.getFullYear();
+  currentMonth = d.getMonth();
+  activeKey    = k;
+  renderCal();
+  renderSchedule();
+  // scroll to schedule on mobile
+  const el = document.getElementById('m-schedule');
+  if(el) el.scrollIntoView({behavior:'smooth'});
+};
+
+window.openWeekModal = async function(){
+  document.getElementById('weekModal').style.display='flex';
+  await renderWeekView();
+};
+window.closeWeekModal = function(){
+  document.getElementById('weekModal').style.display='none';
+};
+window.shiftWeek = async function(dir){
+  weekOffset += dir;
+  await renderWeekView();
+};
+window.weekGoToday = async function(){
+  weekOffset = 0;
+  await renderWeekView();
+};
+
+async function renderWeekView(){
+  const ws = getWeekStart(weekOffset);
+  const days = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(ws); d.setDate(ws.getDate()+i);
+    days.push(d);
+  }
+
+  // label do intervalo
+  const fmt = d => `${p2(d.getDate())}/${p2(d.getMonth()+1)}`;
+  document.getElementById('week-range-label').textContent =
+    `${fmt(days[0])} – ${fmt(days[6])} de ${days[0].getFullYear()}`;
+
+  // preload dos dias da semana
+  const keys = days.map(d=>dk(d));
+  await Promise.all(keys.map(k=>loadDay(k)));
+
+  const SHORT_DAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const todK = todayKey();
+  const cols = 1 + 7; // time + 7 days
+
+  // col-headers
+  let hdrs = `<div class="week-col-headers" style="grid-template-columns:52px repeat(7,1fr);">
+    <div style="background:#0d2347;"></div>`;
+  days.forEach((d,i)=>{
+    const k = keys[i];
+    const isToday = k===todK;
+    hdrs += `<div class="week-day-hdr${isToday?' today-col':''}">
+      <div class="week-day-hdr-name">${SHORT_DAYS[d.getDay()]}</div>
+      <div class="week-day-hdr-date" style="cursor:pointer;" onclick="closeWeekModal();selectDay('${k}')">${p2(d.getDate())}</div>
+    </div>`;
+  });
+  hdrs += '</div>';
+
+  // filter slots: only show 06:00–17:30 for compact view, expand if needed
+  // show all slots that have at least one class OR show 06:00-22:00
+  const visSlots = SLOTS.filter(s=>{
+    const [h]=s.split(':').map(Number);
+    return h>=6 && h<=22;
+  });
+
+  // rows
+  let rowsHTML = '';
+  visSlots.forEach(slot=>{
+    const [sh] = slot.split(':').map(Number);
+    const isHalfHour = slot.endsWith(':30');
+    rowsHTML += `<div class="week-row" style="grid-template-columns:52px repeat(7,1fr);${isHalfHour?'opacity:.85':''}">
+      <div class="week-time-cell">${isHalfHour?'':slot}</div>`;
+
+    days.forEach((d,i)=>{
+      const k = keys[i];
+      const data = cache[k];
+      const isToday = k===todK;
+      const aeroOn = data&&data.aeroclube&&data.aeroclube.ativo;
+      const acadBlocked = getAcadBlockedSlots(k);
+      const vooOn = isVoo(k);
+      const v = data&&data.slots&&data.slots[slot];
+      const hasAula = v&&v.student&&v.student.trim()!=='';
+
+      let cellCls = 'week-slot-cell';
+      if(isToday) cellCls += ' today-col';
+      if(hasAula) cellCls += ' has-aula';
+      if(aeroOn&&AERO_BLOCKED.includes(slot)) cellCls += ' week-blocked-aero';
+      else if(acadBlocked.includes(slot)) cellCls += ' week-blocked-acad';
+      if(vooOn&&!AERO_BLOCKED.includes(slot)) cellCls += ' week-voo-row';
+
+      let inner = '';
+      if(hasAula){
+        let pillCls = 'week-aula-pill';
+        if(v.feito) pillCls+=' feito';
+        else if(v.fixo) pillCls+=' fixo';
+        else if(v.remarcado) pillCls+=' remark';
+        inner = `<span class="${pillCls}" onclick="closeWeekModal();selectDay('${k}')" title="${esc(v.student)} — ${slot}">${esc(v.student)}</span>`;
+      } else if(aeroOn&&AERO_BLOCKED.includes(slot)){
+        if(slot==='18:00') inner='<span style="font-size:9px;color:#b38a00;font-weight:600;">🛩️</span>';
+      } else if(acadBlocked.includes(slot)){
+        if(acadBlocked[0]===slot) inner='<span style="font-size:9px;color:#6b3fa0;font-weight:600;">🏋️</span>';
+      }
+
+      rowsHTML += `<div class="${cellCls}">${inner}</div>`;
+    });
+    rowsHTML += '</div>';
+  });
+
+  document.getElementById('weekBody').innerHTML = hdrs +
+    `<div class="week-grid">${rowsHTML}</div>`;
+}
+
 let alunosDB = {};
 
 async function loadAlunos(){
