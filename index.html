@@ -1,4 +1,4 @@
-<!-- v20261106193621 -->
+<!-- v20261106201734 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -343,6 +343,23 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 .week-legend-item { display:flex;align-items:center;gap:4px;color:#666; }
 .week-legend-dot { width:12px;height:12px;border-radius:3px;flex-shrink:0; }
 
+
+/* ══ QUICK-BOOK (semana) ══ */
+.qbook-overlay { position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:3000;display:flex;align-items:center;justify-content:center; }
+.qbook-box { background:white;border-radius:14px;padding:20px 22px;width:320px;box-shadow:0 12px 40px rgba(0,0,0,.3); }
+.qbook-title { font-size:14px;font-weight:700;color:#1a3a6b;margin-bottom:4px; }
+.qbook-sub { font-size:12px;color:#888;margin-bottom:14px; }
+.qbook-list { display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;margin-bottom:14px; }
+.qbook-aluno-btn { background:#f5f0e8;border:1.5px solid #e0d8c0;border-radius:8px;padding:8px 12px;text-align:left;cursor:pointer;font-size:13px;font-weight:600;color:#1a3a6b;transition:all .15s; }
+.qbook-aluno-btn:hover { background:#d4a800;color:white;border-color:#d4a800; }
+.qbook-input-row { display:flex;gap:8px;margin-bottom:0; }
+.qbook-input { flex:1;border:1.5px solid #d0c8b0;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;font-family:inherit; }
+.qbook-input:focus { border-color:#d4a800; }
+.qbook-confirm { background:#2a9d5c;color:white;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer; }
+.qbook-confirm:hover { background:#238a50; }
+.qbook-cancel { background:none;border:none;color:#999;font-size:12px;cursor:pointer;margin-top:10px;width:100%;text-align:center; }
+.qbook-cancel:hover { color:#555; }
+
 /* ── PRINT ── */
 @media print {
   body { background:white; }
@@ -372,6 +389,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
     <div class="d-header-right">
       <div class="sync-wrap"><div class="sync-dot" id="d-dot"></div><span id="d-sync">conectando...</span></div>
       <button class="btn btn-danger" onclick="clearDay()">🗑 Limpar dia</button>
+      <button class="btn btn-danger" onclick="clearFixosMes()" title="Remove todos os slots fixos do mês atual">🔒 Limpar fixos</button>
       <button class="btn btn-gold"   onclick="window.print()">🖨 Imprimir</button>
       <button class="btn btn-gold"   onclick="openWeekModal()" title="Visão semanal">📅 Semana</button>
       <button class="btn btn-gold"   onclick="openCadastro()" title="Cadastro de alunos">⚙️</button>
@@ -497,6 +515,21 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
   </div>
 </div>
 
+
+
+<!-- ══ QUICK-BOOK MODAL ══ -->
+<div class="qbook-overlay" id="qbookModal" style="display:none;" onclick="if(event.target===this)closeQBook()">
+  <div class="qbook-box">
+    <div class="qbook-title" id="qbook-title">Marcar aula</div>
+    <div class="qbook-sub" id="qbook-sub"></div>
+    <div class="qbook-list" id="qbook-list"></div>
+    <div class="qbook-input-row">
+      <input class="qbook-input" id="qbook-input" placeholder="Ou digite o nome..." onkeydown="if(event.key==='Enter')confirmQBook()">
+      <button class="qbook-confirm" onclick="confirmQBook()">✓</button>
+    </div>
+    <button class="qbook-cancel" onclick="closeQBook()">Cancelar</button>
+  </div>
+</div>
 
 <!-- ══ MODAL VISÃO SEMANAL ══ -->
 <div class="week-modal-overlay" id="weekModal" style="display:none;" onclick="if(event.target===this)closeWeekModal()">
@@ -1052,6 +1085,37 @@ window.clearDay=async function(){
   renderCal(); await renderSchedule();
 };
 
+window.clearFixosMes=async function(){
+  // coleta todos os dias do mês atual que estão em cache
+  const ano = currentYear, mes = currentMonth;
+  const diasDoMes = Object.keys(cache).filter(k=>{
+    const d = kd(k);
+    return d.getFullYear()===ano && d.getMonth()===mes;
+  });
+  // conta quantos fixos existem
+  let total = 0;
+  diasDoMes.forEach(k=>{
+    if(!cache[k]) return;
+    Object.values(cache[k].slots||{}).forEach(v=>{ if(v.fixo) total++; });
+  });
+  if(total===0){ alert('Nenhum slot fixo encontrado no mês atual.'); return; }
+  const mes_nome = MONTHS[mes];
+  if(!confirm(`Remover todos os ${total} horário(s) fixo(s) de ${mes_nome}/${ano}?\n\nOs nomes dos alunos e outros dados serão mantidos — só o status FIXO será removido.`)) return;
+  // remove fixo de todos os dias do mês
+  const saves = [];
+  diasDoMes.forEach(k=>{
+    if(!cache[k]) return;
+    let changed = false;
+    Object.keys(cache[k].slots||{}).forEach(s=>{
+      if(cache[k].slots[s].fixo){ cache[k].slots[s].fixo=false; changed=true; }
+    });
+    if(changed) saves.push(saveDay(k));
+  });
+  await Promise.all(saves);
+  renderCal(); await renderSchedule();
+  alert(`✓ ${total} fixo(s) removido(s) em ${mes_nome}/${ano}.`);
+};
+
 // ── ALUNOS CADASTRADOS ──
 
 // ══ VISÃO SEMANAL ══
@@ -1160,20 +1224,29 @@ async function renderWeekView(){
       else if(acadBlocked.includes(slot)) cellCls += ' week-blocked-acad';
       if(vooOn&&!AERO_BLOCKED.includes(slot)) cellCls += ' week-voo-row';
 
+      const isBlocked = (aeroOn&&AERO_BLOCKED.includes(slot)) || acadBlocked.includes(slot);
       let inner = '';
+      let cellClick = '';
       if(hasAula){
         let pillCls = 'week-aula-pill';
         if(v.feito) pillCls+=' feito';
         else if(v.fixo) pillCls+=' fixo';
         else if(v.remarcado) pillCls+=' remark';
-        inner = `<span class="${pillCls}" onclick="closeWeekModal();selectDay('${k}')" title="${esc(v.student)} — ${slot}">${esc(v.student)}</span>`;
+        inner = `<span class="${pillCls}" style="display:flex;align-items:center;justify-content:space-between;gap:4px;"
+          onclick="event.stopPropagation();closeWeekModal();selectDay('${k}')" title="${esc(v.student)} — ${slot}">
+          <span style="overflow:hidden;text-overflow:ellipsis;">${esc(v.student)}</span>
+          <span onclick="event.stopPropagation();quickRemove('${k}','${slot}')" style="opacity:.7;font-size:10px;padding:0 2px;cursor:pointer;" title="Remover">✕</span>
+        </span>`;
       } else if(aeroOn&&AERO_BLOCKED.includes(slot)){
         if(slot==='18:00') inner='<span style="font-size:9px;color:#b38a00;font-weight:600;">🛩️</span>';
       } else if(acadBlocked.includes(slot)){
         if(acadBlocked[0]===slot) inner='<span style="font-size:9px;color:#6b3fa0;font-weight:600;">🏋️</span>';
       }
+      if(!isBlocked && !hasAula){
+        cellClick = `onclick="openQBook('${k}','${slot}')"`;
+      }
 
-      rowsHTML += `<div class="${cellCls}">${inner}</div>`;
+      rowsHTML += `<div class="${cellCls}" ${cellClick}>${inner}</div>`;
     });
     rowsHTML += '</div>';
   });
@@ -1181,6 +1254,60 @@ async function renderWeekView(){
   document.getElementById('weekBody').innerHTML = hdrs +
     `<div class="week-grid">${rowsHTML}</div>`;
 }
+
+
+// ══ QUICK-BOOK ══
+let _qbKey='', _qbSlot='';
+
+window.openQBook = function(k, slot){
+  _qbKey=k; _qbSlot=slot;
+  const dt=kd(k);
+  const wd=WEEKDAYS[dt.getDay()];
+  document.getElementById('qbook-title').textContent='📅 Marcar aula';
+  document.getElementById('qbook-sub').textContent=`${wd}, ${p2(dt.getDate())}/${p2(dt.getMonth()+1)} às ${slot}`;
+  // lista alunos cadastrados
+  const names = Object.keys(alunosDB).sort();
+  const listEl = document.getElementById('qbook-list');
+  if(names.length){
+    listEl.innerHTML = names.map(n=>`<button class="qbook-aluno-btn" onclick="quickBook('${esc(n)}')">${esc(n)}</button>`).join('');
+  } else {
+    listEl.innerHTML = '<span style="font-size:12px;color:#aaa;">Nenhum aluno cadastrado</span>';
+  }
+  document.getElementById('qbook-input').value='';
+  document.getElementById('qbookModal').style.display='flex';
+  setTimeout(()=>document.getElementById('qbook-input').focus(),100);
+};
+
+window.quickBook = async function(nome){
+  if(!nome) return;
+  if(!cache[_qbKey]) cache[_qbKey]=emptyDay();
+  cache[_qbKey].slots[_qbSlot].student=nome;
+  schedule(_qbKey);
+  closeQBook();
+  await renderWeekView();
+};
+
+window.confirmQBook = async function(){
+  const nome = document.getElementById('qbook-input').value.trim();
+  if(!nome){ document.getElementById('qbook-input').focus(); return; }
+  await quickBook(nome);
+};
+
+window.closeQBook = function(){
+  document.getElementById('qbookModal').style.display='none';
+};
+
+window.quickRemove = async function(k, slot){
+  if(!confirm('Remover esta aula?')) return;
+  if(!cache[k]) return;
+  cache[k].slots[slot].student='';
+  cache[k].slots[slot].feito=false;
+  cache[k].slots[slot].fixo=false;
+  cache[k].slots[slot].remarcado=false;
+  schedule(k);
+  await renderWeekView();
+  if(k===activeKey) await renderSchedule();
+};
 
 let alunosDB = {};
 
