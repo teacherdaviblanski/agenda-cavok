@@ -1099,34 +1099,45 @@ window.clearDay=async function(){
 };
 
 window.clearFixosMes=async function(){
-  // coleta todos os dias do mês atual que estão em cache
-  const ano = viewYear, mes = viewMonth;
-  const diasDoMes = Object.keys(cache).filter(k=>{
-    const d = kd(k);
-    return d.getFullYear()===ano && d.getMonth()===mes;
-  });
-  // conta quantos fixos existem
+  // Carrega todos os dias futuros (hoje em diante) dos próximos 60 dias para garantir cache completo
+  const todK = todayKey();
+  const loadJobs = [];
+  for(let i=0;i<60;i++){
+    const d=new Date(TODAY); d.setDate(TODAY.getDate()+i);
+    const k=dk(d);
+    if(!cache[k]) loadJobs.push(loadDay(k));
+  }
+  if(loadJobs.length) await Promise.all(loadJobs);
+
+  // Coleta slots fixos a partir de hoje
+  const futureKeys = Object.keys(cache).filter(k=> k >= todK);
   let total = 0;
-  diasDoMes.forEach(k=>{
+  futureKeys.forEach(k=>{
     if(!cache[k]) return;
     Object.values(cache[k].slots||{}).forEach(v=>{ if(v.fixo) total++; });
   });
-  if(total===0){ alert('Nenhum slot fixo encontrado no mês atual.'); return; }
-  const mes_nome = MONTHS[mes];
-  if(!confirm(`Remover todos os ${total} horário(s) fixo(s) de ${mes_nome}/${ano}?\n\nOs nomes dos alunos e outros dados serão mantidos — só o status FIXO será removido.`)) return;
-  // remove fixo de todos os dias do mês
+  if(total===0){ alert('Nenhum horário fixo encontrado a partir de hoje.'); return; }
+  if(!confirm(`Remover ${total} horário(s) fixo(s) a partir de hoje?\n\nO status FIXO será removido e os nomes dos alunos nesses dias futuros serão apagados.`)) return;
+
+  // Remove fixo E apaga o aluno nos dias futuros (hoje em diante)
   const saves = [];
-  diasDoMes.forEach(k=>{
+  futureKeys.forEach(k=>{
     if(!cache[k]) return;
     let changed = false;
     Object.keys(cache[k].slots||{}).forEach(s=>{
-      if(cache[k].slots[s].fixo){ cache[k].slots[s].fixo=false; changed=true; }
+      if(cache[k].slots[s].fixo){
+        cache[k].slots[s].fixo = false;
+        cache[k].slots[s].student = '';
+        cache[k].slots[s].feito = false;
+        cache[k].slots[s].remarcado = false;
+        changed = true;
+      }
     });
     if(changed) saves.push(saveDay(k));
   });
   await Promise.all(saves);
   renderCal(); await renderSchedule();
-  alert(`✓ ${total} fixo(s) removido(s) em ${mes_nome}/${ano}.`);
+  alert(`✓ ${total} fixo(s) removido(s) a partir de hoje.`);
 };
 
 // ── ALUNOS CADASTRADOS ──
