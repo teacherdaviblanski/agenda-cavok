@@ -314,7 +314,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 .week-close { background:none;border:none;color:#ccc;font-size:20px;cursor:pointer;padding:0 4px; }
 .week-close:hover { color:white; }
 .week-body { overflow:auto;flex:1;padding:0; }
-.week-grid { display:grid;min-width:700px; }
+.week-grid { display:grid;min-width:500px; }
 .week-col-headers { display:grid;position:sticky;top:0;z-index:10;background:#1a3a6b; }
 .week-day-hdr { padding:8px 6px;text-align:center;border-right:1px solid rgba(255,255,255,.1); }
 .week-day-hdr-name { font-size:11px;font-weight:700;color:#f0c040;text-transform:uppercase; }
@@ -325,8 +325,19 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8eef7; min-heig
 .week-time-col { width:52px;flex-shrink:0; }
 .week-row { display:grid;border-bottom:1px solid #e8dfc8; }
 .week-row:hover { background:#fdf8ef; }
-.week-time-cell { padding:3px 6px;text-align:right;font-size:10px;font-weight:600;color:#b0a070;border-right:2px solid #d4a800;background:#faf6ed;position:sticky;left:0;z-index:5; }
-.week-slot-cell { padding:3px 4px;border-right:1px solid #e8dfc8;min-height:32px;position:relative;cursor:pointer; }
+.week-time-cell { padding:3px 4px;text-align:right;font-size:9px;font-weight:600;color:#b0a070;border-right:2px solid #d4a800;background:#faf6ed;position:sticky;left:0;z-index:5;white-space:nowrap; }
+.week-time-cell.half { color:#cbb880;font-weight:400; }
+.week-slot-cell { padding:2px 3px;border-right:1px solid #e8dfc8;min-height:26px;position:relative;cursor:pointer; }
+@media(max-width:600px){
+  .week-modal { width:100% !important;height:100% !important;max-width:100% !important;border-radius:0 !important; }
+  .week-modal-overlay { align-items:flex-start !important;padding:0 !important; }
+  .week-grid { min-width:340px; }
+  .week-time-cell { font-size:8px;padding:2px 2px; }
+  .week-slot-cell { min-height:22px;padding:1px 2px; }
+  .week-aula-pill { font-size:9px;padding:1px 3px; }
+  .week-day-hdr-name { font-size:9px !important; }
+  .week-day-hdr-date { font-size:13px !important; }
+}
 .week-slot-cell:hover { background:#fff8e8; }
 .week-slot-cell.today-col { background:#fffbe8; }
 .week-slot-cell.has-aula { background:#f0fff4; }
@@ -1170,7 +1181,7 @@ async function renderWeekView(){
   const cols = 1 + 7; // time + 7 days
 
   // col-headers
-  let hdrs = `<div class="week-col-headers" style="grid-template-columns:52px repeat(7,1fr);">
+  let hdrs = `<div class="week-col-headers" style="grid-template-columns:50px repeat(7,1fr);">
     <div style="background:#0d2347;"></div>`;
   days.forEach((d,i)=>{
     const k = keys[i];
@@ -1194,8 +1205,8 @@ async function renderWeekView(){
   visSlots.forEach(slot=>{
     const [sh] = slot.split(':').map(Number);
     const isHalfHour = slot.endsWith(':30');
-    rowsHTML += `<div class="week-row" style="grid-template-columns:52px repeat(7,1fr);${isHalfHour?'opacity:.85':''}">
-      <div class="week-time-cell">${isHalfHour?'':slot}</div>`;
+    rowsHTML += `<div class="week-row" style="grid-template-columns:50px repeat(7,1fr);">
+      <div class="week-time-cell${isHalfHour?' half':''}">${slot}</div>`;
 
     days.forEach((d,i)=>{
       const k = keys[i];
