@@ -678,6 +678,8 @@ async function selectDay(k){
   viewYear=d.getFullYear(); viewMonth=d.getMonth();
   renderCal();
   await renderSchedule();
+  const el=document.getElementById('m-schedule');
+  if(el) el.scrollIntoView({behavior:'smooth'});
 }
 
 function renderCal(){
@@ -1129,18 +1131,6 @@ function getWeekStart(offset){
   return d;
 }
 
-
-window.selectDay = function(k){
-  const d = kd(k);
-  currentYear  = d.getFullYear();
-  currentMonth = d.getMonth();
-  activeKey    = k;
-  renderCal();
-  renderSchedule();
-  // scroll to schedule on mobile
-  const el = document.getElementById('m-schedule');
-  if(el) el.scrollIntoView({behavior:'smooth'});
-};
 
 window.openWeekModal = async function(){
   document.getElementById('weekModal').style.display='flex';
