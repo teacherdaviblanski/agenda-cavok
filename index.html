@@ -1100,7 +1100,7 @@ window.clearDay=async function(){
 
 window.clearFixosMes=async function(){
   // coleta todos os dias do mês atual que estão em cache
-  const ano = currentYear, mes = currentMonth;
+  const ano = viewYear, mes = viewMonth;
   const diasDoMes = Object.keys(cache).filter(k=>{
     const d = kd(k);
     return d.getFullYear()===ano && d.getMonth()===mes;
